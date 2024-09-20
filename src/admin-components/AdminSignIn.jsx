@@ -17,11 +17,7 @@ const AdminSignIn = () => {
         <div className="p-12 w-1/2 ">
           <div className=" m-5">
             <div className="">
-              <button
-                className="text-blue-500 border-b-2 pb-2 border-blue-500 focus:outline-none"
-                onClick={() =>
-                  localStorage.setItem('token', 'sgfgigdifgiagsihoau374663689wknala$%%Q%hgsaj')
-                }>
+              <button className="text-blue-500 border-b-2 pb-2 border-blue-500 focus:outline-none">
                 Sign In
               </button>
             </div>
@@ -58,6 +54,9 @@ const AdminSignIn = () => {
                     </div>
                   </div>
                   <button
+                    onClick={() =>
+                      localStorage.setItem('token', 'sgfgigdifgiagsihoau374663689wknala$%%Q%hgsaj')
+                    }
                     type="submit"
                     className="w-full py-2 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600">
                     Sign In
