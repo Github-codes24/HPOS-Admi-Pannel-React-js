@@ -1,21 +1,14 @@
-// import React from "react";
-import "./App.css";
-// import AdminSignIn from "./admin-components/AdminSignIn";
-// import AdminSignUp from "./admin-components/AdminSignUp";
-// import Home from "./admin-components/admin-dashboard/Home";
-// import UpdateScreeningData from "./admin-components/admin-dashboard/UpdateScreeningData";
-import { CustomRoute } from "./routes/custom.routes";
+import React from 'react';
+import { Provider } from 'react-redux';
+import { CustomRoute } from './routes/custom.routes';
+import { store } from './store';
 
-const App = () => {
+function App() {
   return (
-    <>
+    <Provider store={store}>
       <CustomRoute />
-      {/* <AdminSignIn /> */}
-      {/* <AdminSignUp /> */}
-      {/* <Home /> */}
-      {/* <UpdateScreeningData /> */}
-    </>
+    </Provider>
   );
-};
+}
 
 export default App;
