@@ -9,7 +9,7 @@ const getPrivateRoute = (privateRouteList) => {
       ...item,
       loader: () => {
         const authToken = localStorage.getItem('token');
-        if (!authToken) return redirect('/login'); // Redirect to login if no token
+        if (!authToken) return redirect('/adminsignin'); // Redirect to login if no token
         return null;
       }
     }));
