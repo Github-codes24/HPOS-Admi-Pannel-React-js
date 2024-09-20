@@ -1,3 +1,3 @@
-import Login from '../components/login';
+import AdminSignIn from '../components/admin-components/AdminSignIn';
 
-export const publicRoutes = [{ path: '/login', element: <Login /> }];
+export const publicRoutes = [{ path: '/adminsignin', element: <AdminSignIn /> }];
