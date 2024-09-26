@@ -6,7 +6,6 @@ function useFetch() {
     try {
       // Correct token key retrieval
       const token = sessionStorage.getItem('token');
-      console.log('Token:', token);
 
       const axiosConfig = {
         method,
@@ -21,6 +20,7 @@ function useFetch() {
       const result = await axios(axiosConfig);
       return result.data;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error fetching data from ${url}:`, error.message, error.stack);
       throw error; // Rethrow the error to propagate it
     }

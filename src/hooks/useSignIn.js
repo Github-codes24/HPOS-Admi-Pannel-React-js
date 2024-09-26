@@ -1,11 +1,13 @@
+// Assuming you are using TypeScript, add proper return types for these functions
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import conf from '../config/index';
 import { userAuthState } from '../state/isAuthenticatedAtom';
 import { AlertContentState, AlertState } from '../state/toastState';
 import useFetch from './useFetch';
 
+// @typescript-eslint/explicit-function-return-type
 export const useSignIn = () => {
   const navigate = useNavigate();
   const setAlertContent = useSetRecoilState(AlertContentState);
@@ -13,16 +15,14 @@ export const useSignIn = () => {
   const [fetchData] = useFetch();
   const setUserInfo = useSetRecoilState(userAuthState);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [signInResponse, setSignInResponse] = useState(null);
-  // userName
+
   const signIn = async (userName, password) => {
     const data = { userName, password };
     setLoading(true);
     try {
       const url = new URL(`${conf.apiBaseUrl}admin/login`);
       const res = await fetchData({ method: 'POST', url: url.toString(), data });
-      console.log('res', res);
 
       if (res) {
         setSignInResponse(res);
@@ -45,6 +45,7 @@ export const useSignIn = () => {
         navigate('/dashboard');
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching Sign in:', error);
       setLoading(false);
     }
@@ -58,7 +59,6 @@ export const useSignIn = () => {
     signIn,
     signInResponse,
     loading,
-    error,
     resetUserAndAdmin
   };
 };
