@@ -26,7 +26,7 @@ export default [
       'plugin:react/recommended',
       'plugin:react-hooks/recommended',
       'plugin:prettier/recommended',
-      'plugin:@typescript-eslint/eslint-recommended',
+    //   'plugin:@typescript-eslint/eslint-recommended',
       'plugin:@typescript-eslint/recommended',
       'plugin:jest/recommended'
     )

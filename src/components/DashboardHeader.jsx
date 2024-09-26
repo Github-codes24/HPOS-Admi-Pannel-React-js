@@ -1,7 +1,7 @@
-import first from '../../assets/1.png'
-import second from '../../assets/2.png'
-import third from '../../assets/3.png'
-import fourth from '../../assets/4.png'
+import first from '../assets/1.png'
+import second from '../assets/2.png'
+import third from '../assets/3.png'
+import fourth from '../assets/4.png'
 const Header = () => {
     return (
         <div className="bg-white shadow-md py-4 px-8 flex justify-between items-center">

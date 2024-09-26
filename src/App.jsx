@@ -1,13 +1,32 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { CustomRoute } from './routes/custom.routes';
-import { store } from './store';
+import React, { Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import ErrorBoundary from './components/ErrorBoundary';
+import ProtectedRoute from './routes/ProtectedRoute';
+import LoginPage from './components/login/LoginPage';
+import Home from './components/Home';
 
 function App() {
   return (
-    <Provider store={store}>
-      <CustomRoute />
-    </Provider>
+    <div>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route
+              path="/dashboard"
+              element={
+                <ErrorBoundary>
+                  <Suspense>
+                    <Home />
+                  </Suspense>
+                </ErrorBoundary>
+              }
+            />
+          </Route>
+        </Routes>
+      </Router>
+    </div>
   );
 }
 

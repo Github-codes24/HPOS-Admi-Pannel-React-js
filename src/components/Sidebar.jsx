@@ -1,5 +1,5 @@
-import logo from '../../assets/logo.png';
-import bg from '../../assets/bg.png';
+import logo from '../assets/logo.png';
+import bg from '../assets/bg.png';
 import { useEffect, useState } from 'react';
 
 const Sidebar = () => {
