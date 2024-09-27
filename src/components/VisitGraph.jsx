@@ -14,12 +14,14 @@ const PatientVisitChart = () => {
         }
     };
     const data = [
-        { name: 'Jan', visits: 50 },
-        { name: 'Feb', visits: 80 },
-        { name: 'Mar', visits: 100 },
-        { name: 'Apr', visits: 120 },
-        { name: 'May', visits: 140 },
-        { name: 'Jun', visits: 130 },
+        { name: 'Jan', visits: 55 },
+        { name: 'Feb', visits: 155 },
+        { name: 'Mar', visits: 75 },
+        { name: 'Apr', visits: 40 },
+        { name: 'May', visits: 55 },
+        { name: 'Jun', visits: 45 },
+
+       
     ];
 
     return (

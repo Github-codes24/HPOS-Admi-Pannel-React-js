@@ -3,8 +3,10 @@ import HeaderSickel from './HeaderSickel'
 import TopStatImages from './TopStatImages'
 import Sidebar from '../Sidebar'
 import PatientVisitChart from '../VisitGraph'
-import PatientData from '../DataTable'
+import CenterCountSickel from './CenterCountSickel'
 import ScreeningDataSickel from './ScreeningDataSickel'
+import CandidateVisitChartSickel from './CandidateVisitChartSickel'
+import ReportSickel from './ReportSickel'
 
 const SickleCell = () => {
   return (
@@ -14,14 +16,19 @@ const SickleCell = () => {
             <div className="flex-1 bg-gray-100 p-4">
                 <HeaderSickel/>
                 <div className="flex justify-between">
-                    <div className=''>
+                    <div className=' w-[40rem]'>
                        <TopStatImages/>
-                        <PatientVisitChart />
+                       <ReportSickel/>
+                       <CandidateVisitChartSickel/>
+                      
+                        
                     </div>
-                    {/* <CenterCount /> */}
+                   
+
+                    <CenterCountSickel/>
                     {/* <ScreeningStatusPieChart /> */}
                 </div>
-                {/* <PatientData /> */}
+              
                 <ScreeningDataSickel/>
             </div>
         </div>
