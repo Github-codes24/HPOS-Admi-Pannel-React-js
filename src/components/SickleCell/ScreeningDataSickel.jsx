@@ -1,4 +1,25 @@
-const PatientData = () => {
+import { useEffect, useState } from "react";
+import axios from "axios";
+const ScreeningDataSickel = () => {
+   
+    const [sickelData,setSickelData]=useState([])
+    const ScreeningSickelAPI="https://hpos-admi-pannel-node-js-new.onrender.com/sickleCell/getAllPatients"
+   
+
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const res = await axios.get(ScreeningSickelAPI);
+            // console.log(res.data.data); 
+            setSickelData(res.data); 
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
+        };
+        fetchData();
+      }, []);
+
+
     const patients = [
         { name: "Sahil Khan", date: "08/10/2024", centerCode: "Center Code", bloodStatus: "Submitted", resultStatus: "Pending", hplc: "Pending", cardStatus: "Handout" },
         { name: "Rahul Khan", date: "08/10/2024", centerCode: "Center Code", bloodStatus: "Pending", resultStatus: "Submitted", hplc: "Submitted", cardStatus: "Pending" },
@@ -40,24 +61,27 @@ const PatientData = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {patients.map((item, index) => (
-                        <tr key={index}>
+                    { sickelData.length>0?sickelData.map((item, index) => (
+                       
+                        <tr key={item._id}>
+                             {/* const {address,_id,birthYear,gender,mobileNumber,fathersName,motherName,maritalStatus,category,caste,subCaste,centerName,isUnderMedication,isUnderBloodTransfusion,familyHistory}=item */}
                             <td className="border px-4 py-2 text-center">
                                 <input type="checkbox" />
+                               
                             </td>
-                            <td className="border px-4 py-2">{item.name}</td>
-                            <td className="border px-4 py-2">{item.date}</td>
-                            <td className="border px-4 py-2">{item.centerCode}</td>
-                            <td className={`border px-4 py-2 ${item.bloodStatus === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>
+                            <td className="border px-4 py-2">{item?.address}</td>
+                            <td className="border px-4 py-2">{item?.gender}</td>
+                            <td className="border px-4 py-2">{item?.mobileNumber}</td>
+                            <td className={`border px-4 py-2 ${item?.bloodStatus === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>
                                 {item.bloodStatus}
                             </td>
-                            <td className={`border px-4 py-2 ${item.resultStatus === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>
-                                {item.resultStatus}
+                            <td className={`border px-4 py-2 ${item?.resultStatus === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>
+                                {item?.resultStatus}
                             </td>
-                            <td className={`border px-4 py-2 ${item.hplc === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>
-                                {item.hplc}
+                            <td className={`border px-4 py-2 ${item?.hplc === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>
+                                {item?.hplc}
                             </td>
-                            <td className={`border px-4 py-2 ${item.cardStatus === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>{item.cardStatus}</td>
+                            <td className={`border px-4 py-2 ${item?.cardStatus === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>{item.cardStatus}</td>
                             <td className="border px-4 py-2 flex justify-around gap-4">
                                 <button className="text-black hover:text-gray-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-download" viewBox="0 0 16 16">
@@ -79,7 +103,7 @@ const PatientData = () => {
                                 </button>
                             </td>
                         </tr>
-                    ))}
+                    )): <tr><td colSpan="9" className="text-center">Data Loading...</td></tr>}
                 </tbody>
             </table>
         </div>
@@ -191,4 +215,9 @@ const PatientData = () => {
         {/* Filter Modal end */}
     </>
 };
-export default PatientData  
+export default ScreeningDataSickel  
+
+
+
+
+

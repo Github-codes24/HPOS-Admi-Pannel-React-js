@@ -1,6 +1,7 @@
-import logo from '../../assets/logo.png';
-import bg from '../../assets/bg.png';
+import logo from '../assets/logo.png';
+import bg from '../assets/bg.png';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   let x = bg;
@@ -39,7 +40,10 @@ const Sidebar = () => {
                   viewBox="0 0 16 16">
                   <path d="M7.462 0H0v7.19h7.462zM16 0H8.538v7.19H16zM7.462 8.211H0V16h7.462zm8.538 0H8.538V16H16z" />
                 </svg>
+                <Link to="/dashboard">
                 <li className="cursor-pointer">Dashboard</li>
+                </Link>
+                
               </div>
               <div className="flex p-4 bg-blue-600 text-white h-10 items-center gap-4 m-5 rounded-md w-48">
                 <svg
@@ -51,7 +55,10 @@ const Sidebar = () => {
                   viewBox="0 0 16 16">
                   <path d="M7.462 0H0v7.19h7.462zM16 0H8.538v7.19H16zM7.462 8.211H0V16h7.462zm8.538 0H8.538V16H16z" />
                 </svg>
+                {/* <li className="cursor-pointer">Sickle Cell</li> */}
+                <Link  to="/Sickle Cell"    >
                 <li className="cursor-pointer">Sickle Cell</li>
+                </Link>
               </div>
               <div className="flex p-4 bg-blue-600 text-white h-10 items-center gap-4 m-5 rounded-md w-48">
                 <svg

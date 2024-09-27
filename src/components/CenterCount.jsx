@@ -52,12 +52,16 @@ const CenterCount = () => {
                         {
                             data && data
                                 .slice(0, viewMore ? data.length : 4)
-                                .map(item => <tr>
-                                    <td>{item.srNo}</td>
-                                    <td>{item.campName}</td>
-                                    <td>{item.date}</td>
-                                    <td>{item.count}</td>
-                                </tr>)
+                                .map((item, index) => {
+                                    return (
+                                        <tr key={`${item.srNo}-${index}`}>
+                                            <td>{item.srNo}</td>
+                                            <td>{item.campName}</td>
+                                            <td>{item.date}</td>
+                                            <td>{item.count}</td>
+                                        </tr>
+                                    );
+                                })
                         }
                     </tbody>
                 </table>

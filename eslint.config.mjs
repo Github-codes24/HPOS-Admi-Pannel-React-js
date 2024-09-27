@@ -94,7 +94,7 @@ export default [
       'react/jsx-runtime': 'off',
       'react/react-in-jsx-scope': 'off',
       'no-undef': 'error',
-      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'off',
       'import/no-unused-modules': 'error',
       'prefer-const': 'error',
       'no-shadow': 'error',
