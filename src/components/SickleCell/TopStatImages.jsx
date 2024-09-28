@@ -11,11 +11,6 @@ import third from '../../assets/3.png'
     ];
 
     return (
-        <>
-         <div>
-      <h1>Sickle Cell Information</h1>
-      <p>This is the body content for Sickle Cell.</p>
-    </div>
         <div className="flex grid-cols-4 gap-5 mt-6">
             {stats.map((stat, index) => (
                 <div key={index} className={`p-4 ${stat.color} rounded shadow w-36`}>
@@ -25,7 +20,6 @@ import third from '../../assets/3.png'
                 </div>
             ))}
         </div>
-        </>
     );
 };
 

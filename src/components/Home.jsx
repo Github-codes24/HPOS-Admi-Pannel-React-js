@@ -1,7 +1,7 @@
 import React from 'react'
 import Sidebar from './Sidebar'
 import Dashboard from './MainDashboard'
-import Header, { TopStats } from './DashboardHeader'
+import Header, { TopStats } from './Header'
 import PatientVisitChart from './VisitGraph'
 // import ScreeningStatusPieChart from './PieChart'
 import PatientData from './DataTable'
@@ -19,7 +19,6 @@ const Home = () => {
                         <PatientVisitChart />
                     </div>
                     <CenterCount />
-                    {/* <ScreeningStatusPieChart /> */}
                 </div>
                 <PatientData />
             </div>

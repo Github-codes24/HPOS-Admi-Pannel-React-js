@@ -7,8 +7,3 @@ export const allCandidateDataAtom = atom({
   default: [],
   effects_UNSTABLE: [persistAtom]
 });
-
-export const allCandidatesCountAtom = atom({
-  key: 'candidatesCount',
-  default: null,
-})

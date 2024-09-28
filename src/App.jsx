@@ -9,6 +9,7 @@ import MainLayout from './components/MainLayout';
 import SickleCell from './components/sickleCell/SickleCellPage';
 import BreastCancer from './components/breastCancer/BreastCancerPage';
 import CervicalCancer from './components/cervicalCancer/CervicalCancerPage';
+import DashboardPage from './components/dashboard/DashboardPage';
 
 function App() {
   return (
@@ -33,7 +34,7 @@ function App() {
               }
             />
             {/* Dynamic content that changes inside the layout */}
-            <Route
+            {/* <Route
               path="/dashboard"
               element={
                 <ErrorBoundary>
@@ -42,9 +43,22 @@ function App() {
                   </Suspense>
                 </ErrorBoundary>
               }
+            /> */}
+
+            <Route
+              path="/dashboard"
+              element={
+                <MainLayout>
+                  <ErrorBoundary>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <DashboardPage />
+                    </Suspense>
+                  </ErrorBoundary>
+                </MainLayout>
+              }
             />
 
-<Route
+            <Route
               path="/sickle-cell"
               element={
                 <MainLayout>
