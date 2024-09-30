@@ -9,6 +9,6 @@ export const allBreastCancerAtom = atom({
 });
 // allBreastCountAtom
 export const allBreastCancerCountAtom = atom({
-    key: 'BreastCancerCount',
-    default: null,
-  })
+  key: 'BreastCancerCount',
+  default: null
+});

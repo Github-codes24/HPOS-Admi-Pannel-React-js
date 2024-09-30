@@ -1,16 +1,51 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react'
 import useSickleCell from '../../hooks/useSickleCell';
 import CountingData from './CountingData';
 import ReportData from './ReportData';
 import VisitGraph from './VisitGraph';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const SickleCellPage = () => {
-    const { fetchAllSickleCell, sickleCellData } = useSickleCell();
+    const { fetchAllSickleCell, fetchFilterData, sickleCellData } = useSickleCell();
     console.log(sickleCellData);
+    const dialogRef = useRef(null);
+    // Function to close the dialog
+    const closeDialog = () => {
+        dialogRef.current.close();
+    };
 
     useEffect(() => {
         fetchAllSickleCell();
     }, []);
+
+    const formik = useFormik({
+        initialValues: {
+            personalName: '',
+            resultStatus: '',
+            fromDate: '',
+            toDate: '',
+            centerCode: '',
+            HPLC: '',
+            bloodStatus: '',
+            cardStatus: '',
+        },
+        validationSchema: Yup.object({
+            personalName: Yup.string(),
+            resultStatus: Yup.string(),
+            fromDate: Yup.date(),
+            toDate: Yup.date(),
+            centerCode: Yup.string(),
+            HPLC: Yup.string(),
+            bloodStatus: Yup.string(),
+            cardStatus: Yup.string(),
+        }),
+        onSubmit: (values) => {
+            console.log('values', values)
+            fetchFilterData(values); // Send form values to your API
+            document.getElementById('filterdata').close(); // Close modal after submit
+        },
+    });
 
     return (
         <>
@@ -92,15 +127,16 @@ const SickleCellPage = () => {
 
             {/* Filter Modal Start */}
 
-            <dialog id="filterdata" className="modal">
+            <dialog ref={dialogRef} id="filterdata" className="modal">
                 <div className="modal-box" style={{ width: '900px', height: '400px' }}>
                     <div className="flex justify-between">
                         <h1 className="font-bold">Filters</h1>
                         <div className="flex gap-2 text-sm font-bold">
-                            <span
-                                onClick={() => document.getElementById('filterdata').close()}
+                            <span onClick={closeDialog}
                                 className="cursor-pointer">Cancel</span>
-                            <span className="text-blue-500 cursor-pointer">Save View</span>
+                            <span className="text-blue-500 cursor-pointer"
+                                onClick={formik.handleSubmit}
+                            >Save View</span>
                         </div>
                     </div>
 
@@ -112,7 +148,13 @@ const SickleCellPage = () => {
                                 <div className="collapse-content">
                                     <label
                                         className="input input-sm w-40 input-bordered flex items-center gap-2">
-                                        <input type="text" className="grow" placeholder="Enter Employee Name" />
+                                        <input
+                                            type="text"
+                                            name="personalName"
+                                            value={formik.values.personalName}
+                                            onChange={formik.handleChange}
+                                            className="input input-bordered w-full"
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -120,7 +162,16 @@ const SickleCellPage = () => {
                                 <input type="checkbox" />
                                 <div className="collapse-title text-sm font-medium">Result Status</div>
                                 <div className="collapse-content">
-                                    <p>hello</p>
+                                    <select
+                                        name="resultStatus"
+                                        value={formik.values.resultStatus}
+                                        onChange={formik.handleChange}
+                                        className="select select-bordered w-full"
+                                    >
+                                        <option value="all">All</option>
+                                        <option value="submitted">Submitted</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -130,15 +181,25 @@ const SickleCellPage = () => {
                                 <div className="collapse-title text-sm  font-medium">Select Date</div>
                                 <div className="collapse-content">
                                     <div>
-                                        <h1>To</h1>
-                                        <label
-                                            className="input input-sm w-40 input-bordered flex items-center gap-2">
-                                            <input type="date" className="grow" placeholder="Search" />
+                                        <label>
+                                            Start Date
+                                            <input
+                                                type="date"
+                                                name="fromDate"
+                                                value={formik.values.fromDate}
+                                                onChange={formik.handleChange}
+                                                className="input input-bordered w-full"
+                                            />
                                         </label>
-                                        <h1>From</h1>
-                                        <label
-                                            className="input input-sm w-40 input-bordered flex items-center gap-2">
-                                            <input type="date" className="grow" placeholder="Search" />
+                                        <label>
+                                            End Date
+                                            <input
+                                                type="date"
+                                                name="toDate"
+                                                value={formik.values.toDate}
+                                                onChange={formik.handleChange}
+                                                className="input input-bordered w-full"
+                                            />
                                         </label>
                                     </div>
                                 </div>
@@ -147,7 +208,16 @@ const SickleCellPage = () => {
                                 <input type="checkbox" />
                                 <div className="collapse-title text-sm font-medium">HPLC Status</div>
                                 <div className="collapse-content">
-                                    <p>hello</p>
+                                    <select
+                                        name="HPLC"
+                                        value={formik.values.HPLC}
+                                        onChange={formik.handleChange}
+                                        className="select select-bordered w-full"
+                                    >
+                                        <option value="all">All</option>
+                                        <option value="submitted">Submitted</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -160,8 +230,12 @@ const SickleCellPage = () => {
                                     <label
                                         className="input input-sm w-40 input-bordered flex items-center gap-2">
                                         <input
-                                            type="text" className="grow"
-                                            placeholder="Enter Center Code" />
+                                            type="text"
+                                            name="centerCode"
+                                            value={formik.values.centerCode}
+                                            onChange={formik.handleChange}
+                                            className="input input-bordered w-full"
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -169,7 +243,16 @@ const SickleCellPage = () => {
                                 <input type="checkbox" />
                                 <div className="collapse-title text-sm font-medium">Card Status</div>
                                 <div className="collapse-content">
-                                    <p>hello</p>
+                                    <select
+                                        name="cardStatus"
+                                        value={formik.values.cardStatus}
+                                        onChange={formik.handleChange}
+                                        className="select select-bordered w-full"
+                                    >
+                                        <option value="all">All</option>
+                                        <option value="hangout">Hangout</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -180,9 +263,16 @@ const SickleCellPage = () => {
                                 <div className="collapse-content">
                                     <label
                                         className="input input-sm w-40 input-bordered flex items-center gap-2">
-                                        <input
-                                            type="text" className="grow"
-                                            placeholder="Enter Center Code" />
+                                        <select
+                                            name="bloodStatus"
+                                            value={formik.values.bloodStatus}
+                                            onChange={formik.handleChange}
+                                            className="select select-bordered w-full"
+                                        >
+                                            <option value="all">All</option>
+                                            <option value="submitted">Submitted</option>
+                                            <option value="Pending">Pending</option>
+                                        </select>
                                     </label>
                                 </div>
                             </div>
@@ -194,7 +284,6 @@ const SickleCellPage = () => {
                     <button>close</button>
                 </form>
             </dialog>
-            {/* Filter Modal end */}
         </>
     );
 };

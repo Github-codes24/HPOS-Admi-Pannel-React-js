@@ -60,6 +60,42 @@ const useCandidates = () => {
     }
   };
 
-  return { fetchAllCandidates, candidates, loading, fetchCandidateCount, candidateCount };
+  const fetchFilterData = async (filters) => {
+    try {
+      // Ensure filters are defined
+      if (!filters) {
+        throw new Error('No filters provided');
+      }
+      // Construct query parameters from filters
+      const params = new URLSearchParams(filters).toString();
+      const url = `${conf.apiBaseUrl}admin/getAllPatients?${params}`;
+
+      const response = await fetch(url, {
+        method: 'GET', // Ensure the method is GET
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const data = await response.json();
+      setCandidates(data?.totalData); // Ensure you have setCandidates properly defined
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching filter data:', error);
+    }
+  };
+
+  return {
+    fetchAllCandidates,
+    fetchFilterData,
+    candidates,
+    loading,
+    fetchCandidateCount,
+    candidateCount
+  };
 };
 export default useCandidates;

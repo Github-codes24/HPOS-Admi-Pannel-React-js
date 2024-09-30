@@ -15,6 +15,8 @@ const Header = ({ activeTab, onSearch}) => {
         if (onSearch) {
             onSearch({fromDate, toDate });
         }
+        setFromDate(fromDate);
+        setToDate(toDate);
     };
     return (
         <div className="bg-white shadow-md py-4 px-8 flex justify-between items-center">
