@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 
-const PatientVisitChart = () => {
+const VisitGraph = () => {
     const [showGraph, setShowGraph] = useState(true);
 
     // Function to handle the dropdown change
@@ -49,4 +49,4 @@ const PatientVisitChart = () => {
         </div>
     );
 };
-export default PatientVisitChart
+export default VisitGraph

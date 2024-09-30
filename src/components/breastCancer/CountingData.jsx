@@ -1,22 +1,17 @@
 import React, { useEffect } from 'react';
 import useCandidates from '../../hooks/candidateData';
-import first from '../../assets/1.png';
-import second from '../../assets/2.png';
-import third from '../../assets/3.png';
 import fourth from '../../assets/4.png';
+import useBreastCancer from '../../hooks/Usebreastcancer';
 
 const CountingData = () => {
-    const { fetchCandidateCount, candidateCount } = useCandidates();
+    const { fetchBreastCancerCount, breastCancerCount } = useBreastCancer();
 
     useEffect(() => {
-        fetchCandidateCount();
-    }, [fetchCandidateCount]); // Added dependency to avoid lint warnings
+        fetchBreastCancerCount();
+    }, []); // Added dependency to avoid lint warnings
 
     const stats = [
-        { img: first, title: 'Total', value: candidateCount?.totalCount || 0, color: 'bg-white' },
-        { img: second, title: 'Sickle Cell', value: candidateCount?.allSickleCellCancerPatients || 0, color: 'bg-white' },
-        { img: third, title: 'Breast Cancer', value: candidateCount?.allBreastCancerPatients || 0, color: 'bg-white' },
-        { img: fourth, title: 'Cervical Cancer', value: candidateCount?.allCervicalCancerPatients || 0, color: 'bg-white' }
+        { img: fourth, title: 'Total Female', value: breastCancerCount?.totalCount || 0, color: 'bg-white' }
     ];
 
     return (

@@ -5,9 +5,7 @@ import { userIsAuthenticatedAtom, userAuthState } from '../state/isAuthenticated
 
 const ProtectedRoute = () => {
     const isAuthenticated = useRecoilValue(userAuthState).isAuthenticated;
-    console.log("is Authenticated", isAuthenticated);
     const token = sessionStorage.getItem("token");
-    console.log("Token from sessionStorage:", token);
 
     if (!isAuthenticated && !token) {
         return <Navigate to="/" />;

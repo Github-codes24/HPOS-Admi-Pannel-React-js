@@ -1,17 +1,17 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './routes/ProtectedRoute';
 import LoginPage from './components/login/LoginPage';
-import Home from './components/Home';
 import MainLayout from './components/MainLayout';
 import SickleCell from './components/sickleCell/SickleCellPage';
-import BreastCancer from './components/breastCancer/BreastCancerPage';
-import CervicalCancer from './components/cervicalCancer/CervicalCancerPage';
+import BreastCancer from './components/breastCancer/BreastCancerPage';;
 import DashboardPage from './components/dashboard/DashboardPage';
+import CervicalCancerPage from './components/cervicalCancer/CervicalCancerPage';
 
 function App() {
+  const [activeTab, setActiveTab] = useState('Dashboard');
+
   return (
     <div>
       <Router>
@@ -19,36 +19,10 @@ function App() {
           <Route path="/" element={<LoginPage />} />
           {/* Protected Routes for authenticated users */}
           <Route element={<ProtectedRoute />}>
-
-            {/* Main Layout that contains Sidebar and Header */}
-            <Route
-              path="/"
-              element={
-                <ErrorBoundary>
-                  <MainLayout>
-                    <Suspense fallback={<div>Loading...</div>}>
-                      <Home />
-                    </Suspense>
-                  </MainLayout>
-                </ErrorBoundary>
-              }
-            />
-            {/* Dynamic content that changes inside the layout */}
-            {/* <Route
-              path="/dashboard"
-              element={
-                <ErrorBoundary>
-                  <Suspense>
-                    <Home />
-                  </Suspense>
-                </ErrorBoundary>
-              }
-            /> */}
-
             <Route
               path="/dashboard"
               element={
-                <MainLayout>
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
                   <ErrorBoundary>
                     <Suspense fallback={<div>Loading...</div>}>
                       <DashboardPage />
@@ -61,7 +35,7 @@ function App() {
             <Route
               path="/sickle-cell"
               element={
-                <MainLayout>
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
                   <ErrorBoundary>
                     <Suspense fallback={<div>Loading...</div>}>
                       <SickleCell />
@@ -74,7 +48,7 @@ function App() {
             <Route
               path="/breast-cancer"
               element={
-                <MainLayout>
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
                   <ErrorBoundary>
                     <Suspense fallback={<div>Loading...</div>}>
                       <BreastCancer />
@@ -87,10 +61,10 @@ function App() {
             <Route
               path="/cervical-cancer"
               element={
-                <MainLayout>
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
                   <ErrorBoundary>
                     <Suspense fallback={<div>Loading...</div>}>
-                      <CervicalCancer />
+                      <CervicalCancerPage />
                     </Suspense>
                   </ErrorBoundary>
                 </MainLayout>

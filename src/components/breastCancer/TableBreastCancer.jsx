@@ -1,28 +1,24 @@
-import React, { useEffect, useState } from 'react'
-import useCervicalCancer from '../../hooks/useCervicalCancer';
-import CountingData from './CountingData';
-import VisitGraph from './VisitGraph';
+import React, { useEffect } from 'react'
+import useBreastCancer from '../../hooks/useBreastCancer';
 
-const CervicalCancerPage = () => {
-  const { fetchAllCervicalCancer, cervicalCancerData } = useCervicalCancer();
-  console.log(cervicalCancerData);
-
-  useEffect(() => {
-      fetchAllCervicalCancer();
-  }, []);
+const TableBreastCancer = () => {
+    const { fetchAllBreastCancerPatients, breastCancerData } = useBreastCancer();
+    console.log(breastCancerData);
+  
+    useEffect(() => {
+        fetchAllBreastCancerPatients();
+    }, []);
 
   return (
-      <>
-         <CountingData/>
-         <VisitGraph/>
-          <div className="container mx-auto p-4">
+   <>
+    <div className="container mx-auto p-4">
               <div className="flex gap-4 mb-4">
                   <h1 className="text-2xl font-bold">Screening Data</h1>
                   <div className="flex gap-4 items-center">
                       <div
                           onClick={() => document.getElementById('filterdata').showModal()}
                           className="text-blue-500 bg-blue-100 flex items-center px-2 h-5 border-2 border-blue-300 py-2 rounded cursor-pointer">Filter Data
-                          <svg className="ml-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                          <svg className="ml-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"  viewBox="0 0 16 16">
                               <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
                           </svg>
                       </div>
@@ -44,7 +40,7 @@ const CervicalCancerPage = () => {
                       </tr>
                   </thead>
                   <tbody>
-                      {cervicalCancerData?.map((item, index) => (
+                      {breastCancerData?.map((item, index) => (
                           <tr key={index}>
                               <td className="border px-4 py-2 text-center">
                                   <input type="checkbox" />
@@ -193,8 +189,8 @@ const CervicalCancerPage = () => {
               </form>
           </dialog>
           {/* Filter Modal end */}
-      </>
-  );
+   </>
+  )
 }
 
-export default CervicalCancerPage
+export default TableBreastCancer

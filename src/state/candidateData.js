@@ -10,5 +10,5 @@ export const allCandidateDataAtom = atom({
 
 export const allCandidatesCountAtom = atom({
   key: 'candidatesCount',
-  default: null,
-})
+  default: null
+});

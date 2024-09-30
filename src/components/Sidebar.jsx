@@ -4,32 +4,36 @@ import { SvgIcon } from './svg/SvgIcon';
 import logo from '../assets/logo.png';
 import bg from '../assets/bg.png';
 
-const Sidebar = ({toggleSidebar, isSidebarVisible }) => {
+const Sidebar = ({toggleSidebar, isSidebarVisible, setActiveTab }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isMenuItemActive = (path) => location.pathname.includes(path);
-  const isSubMenuActive = (submenuString) => location.pathname.includes(submenuString);
+  // const isMenuItemActive = (path) => location.pathname.includes(path);
+  // const isSubMenuActive = (submenuString) => location.pathname.includes(submenuString);
 
   let x = bg;
-  const [loggedOut, setLoggedOut] = useState(false);
+  // const [loggedOut, setLoggedOut] = useState(false);
 
-  const hideSidebar = () => {
-    if (window.innerWidth <= 1280) {
-      toggleSidebar(false);
-    }
+  const handleTabClick = (tabName) => {
+    setActiveTab(tabName); // Update active tab
   };
 
-  const logoutBtn = () => {
-    localStorage.removeItem('token');
-    setLoggedOut(true);
-    window.location.reload();
-  };
+  // const hideSidebar = () => {
+  //   if (window.innerWidth <= 1280) {
+  //     toggleSidebar(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (loggedOut) {
-      console.log('Logged out');
-    }
-  }, [loggedOut]);
+  // const logoutBtn = () => {
+  //   localStorage.removeItem('token');
+  //   setLoggedOut(true);
+  //   window.location.reload();
+  // };
+
+  // useEffect(() => {
+  //   if (loggedOut) {
+  //     console.log('Logged out');
+  //   }
+  // }, [loggedOut]);
 
   return (
      <aside className={isSidebarVisible ? 'sidebar--container' : 'sidebar--container onHide'}>
@@ -43,6 +47,7 @@ const Sidebar = ({toggleSidebar, isSidebarVisible }) => {
           </div>
           <nav className="mt-4 mx-4">
             <ul>
+            <li onClick={() => handleTabClick('Dashboard')}>
               <div className="flex p-4 bg-blue-600 text-white h-10 items-center gap-4 m-5 rounded-md w-48">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -57,6 +62,8 @@ const Sidebar = ({toggleSidebar, isSidebarVisible }) => {
                   Dashboard
                 </NavLink>
               </div>
+            </li>
+            <li onClick={() => handleTabClick('Sickle Cell')}>
               <div className="flex p-4 bg-blue-600 text-white h-10 items-center gap-4 m-5 rounded-md w-48">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -71,6 +78,8 @@ const Sidebar = ({toggleSidebar, isSidebarVisible }) => {
                   Sickle Cell
                 </NavLink>
               </div>
+            </li>
+            <li onClick={() => handleTabClick('Breast Cancer')}>
               <div className="flex p-4 bg-blue-600 text-white h-10 items-center gap-4 m-5 rounded-md w-48">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -85,6 +94,8 @@ const Sidebar = ({toggleSidebar, isSidebarVisible }) => {
                   Breast Cancer
                 </NavLink>
               </div>
+            </li>
+            <li onClick={() => handleTabClick('Cervical Cancer')}>
               <div className="flex p-4 bg-blue-600 text-white h-10 items-center gap-4 m-5 rounded-md w-48">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -99,6 +110,7 @@ const Sidebar = ({toggleSidebar, isSidebarVisible }) => {
                   Cervical Cancer
                 </NavLink>
               </div>
+            </li>
             </ul>
           </nav>
         </div>

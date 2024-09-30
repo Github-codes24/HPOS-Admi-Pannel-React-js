@@ -7,3 +7,8 @@ export const allCandidateDataAtom = atom({
   default: [],
   effects_UNSTABLE: [persistAtom]
 });
+
+export const allSickleCellCountAtom = atom({
+  key: 'sickleCellsCount',
+  default: null
+});
