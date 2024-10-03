@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import useSickleCell from '../../hooks/useSickleCell';
 
 const ReportData = () => {
-    const [showMore, setShowMore] = useState(false); // State to toggle view
+    const [showMore, setShowMore] = useState(false); 
+    const {fetchSickleCellReport, sickleCellReport} = useSickleCell();
+
+    useEffect(() => {
+        fetchSickleCellReport();
+    }, []);
 
     const stats = [
-        { title: 'Normal', value: '23,425', color: 'bg-white' },
-        { title: 'Sickle Cell Trait', value: '15,424', color: 'bg-white' },
-        { title: 'Sickle Cell Disease', value: '8,001', color: 'bg-white' },
-        { title: 'Total Card Distributed', value: '39', color: 'bg-white' },
+        { title: 'Normal', value: sickleCellReport?.totalNormal, color: 'bg-white' },
+        { title: 'Sickle Cell Trait', value: sickleCellReport?.totalSickleCellTrait, color: 'bg-white' },
+        { title: 'Sickle Cell Disease', value: sickleCellReport?.totalSickleCellDisease, color: 'bg-white' },
+        { title: 'Total Card Distributed', value: sickleCellReport?.totalCardDistributed, color: 'bg-white' },
     ];
 
     return (

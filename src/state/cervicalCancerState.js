@@ -22,3 +22,21 @@ export const toDateCountAtom = atom({
   key: 'toDateCount',
   default: ''
 });
+
+export const cervicalCancerDetailIDAtom = atom({
+  key: 'cervicalCancerDetail',
+  default: null,
+  effects_UNSTABLE: [persistAtom]
+});
+
+export const cervicalCancerVisitAtom = atom({
+  key: 'cervicalCancerVisit',
+  default: [],
+  effects_UNSTABLE: [persistAtom]
+});
+
+export const cervicalCancerCenterCountAtom = atom({
+  key: 'cervicalCancerCenterCount',
+  default: [],
+  effects_UNSTABLE: [persistAtom]
+});

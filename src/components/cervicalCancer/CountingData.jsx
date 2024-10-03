@@ -4,12 +4,9 @@ import useCervicalCancer from '../../hooks/useCervicalCancer';
 
 const CountingData = () => {
     const { fetchCervicalCancerCount, cervicalCancerCount } = useCervicalCancer();
-    const [fromDate, setFromDate] = useState('');
-    const [toDate, setToDate] = useState('');
 
     useEffect(() => {
-        console.log('useEffect', fromDate, toDate)
-        fetchCervicalCancerCount(fromDate, toDate);
+        fetchCervicalCancerCount( '', '');
     }, []);
 
     const stats = [

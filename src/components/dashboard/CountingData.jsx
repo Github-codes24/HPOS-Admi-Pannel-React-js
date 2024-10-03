@@ -9,8 +9,8 @@ const CountingData = () => {
     const { fetchCandidateCount, candidateCount } = useCandidates();
 
     useEffect(() => {
-        fetchCandidateCount();
-    }, [fetchCandidateCount]); // Added dependency to avoid lint warnings
+        fetchCandidateCount( '', '');
+    }, []); 
 
     const stats = [
         { img: first, title: 'Total', value: candidateCount?.totalCount || 0, color: 'bg-white' },

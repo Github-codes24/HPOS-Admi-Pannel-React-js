@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import useCandidates from '../../hooks/candidateData';
 import fourth from '../../assets/4.png';
-import useBreastCancer from '../../hooks/Usebreastcancer';
+import useBreastCancer from '../../hooks/useBreastCancer';
 
 const CountingData = () => {
     const { fetchBreastCancerCount, breastCancerCount } = useBreastCancer();
 
     useEffect(() => {
-        fetchBreastCancerCount();
+        fetchBreastCancerCount( '', '');
     }, []); // Added dependency to avoid lint warnings
 
     const stats = [

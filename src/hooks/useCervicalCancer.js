@@ -3,15 +3,27 @@ import { useRecoilState } from 'recoil';
 import conf from '../config/index';
 import {
   allCervicalCancerCountAtom,
-  allCervicalCancerDataAtom
+  allCervicalCancerDataAtom,
+  cervicalCancerCenterCountAtom,
+  cervicalCancerDetailIDAtom,
+  cervicalCancerVisitAtom
 } from '../state/cervicalCancerState';
+import { toastState } from '../state/toastState';
 import useFetch from './useFetch';
 
 const useCervicalCancer = () => {
   const [fetchData] = useFetch();
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState('');
   const [cervicalCancerData, setCervicalCancerData] = useRecoilState(allCervicalCancerDataAtom);
   const [cervicalCancerCount, setCervicalCancerCount] = useRecoilState(allCervicalCancerCountAtom);
+  const [modifyCervicalCancer, setModifyCervicalCancer] = useRecoilState(toastState);
+  const [cervicalCancerDetails, setCervicalCancerDatails] = useRecoilState(
+    cervicalCancerDetailIDAtom
+  );
+  const [cervicalCancerVisit, setCervicalCancerVisit] = useRecoilState(cervicalCancerVisitAtom);
+  const [deletePatientData, setDeletePatientData] = useRecoilState(toastState);
+  const [centerCountData, setCenterCountData] = useRecoilState(cervicalCancerCenterCountAtom);
 
   const fetchCervicalCancerCount = async (fromDate, toDate) => {
     // eslint-disable-next-line no-console
@@ -39,19 +51,31 @@ const useCervicalCancer = () => {
   const fetchAllCervicalCancer = async () => {
     setLoading(true);
     try {
-      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}cervical/getAllPatients` })
-        .then((res) => {
+      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}cervical/getAllPatients` }).then(
+        (res) => {
           if (res) {
             setCervicalCancerData(res?.data);
           }
-        })
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.error('Error fetching getAllPatients:', error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+        }
+      );
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching getAllPatients:', error);
+    }
+  };
+
+  const fetchCervicalCancerCenterCount = async () => {
+    setLoading(true);
+    try {
+      // Send a GET request to fetch the getAllPatients dropdown data
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}cervical/getCenterCountsForCervicalCancer`
+      }).then((res) => {
+        if (res) {
+          setCenterCountData(res?.totalData);
+        }
+      });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching getAllPatients:', error);
@@ -87,13 +111,98 @@ const useCervicalCancer = () => {
     }
   };
 
+  const fetchCervicalCancerById = async (id) => {
+    setLoading(true);
+    try {
+      const res = await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}cervical/getCervicalCancerPatientById/${id}`
+      });
+      if (res) {
+        setCervicalCancerDatails(res?.data);
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching branches :', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateCervicalCancer = async (id, updateData) => {
+    setLoading(true);
+    try {
+      fetchData({
+        method: 'PUT',
+        url: `${conf.apiBaseUrl}cervical/updateCervicalCancerPatient/${id}`,
+        data: updateData
+      }).then((res) => {
+        if (res) {
+          setModifyCervicalCancer(res?.message);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error updating email template:', error);
+      setLoading(false);
+    }
+  };
+
+  const fetchGraphData = async (timeFrame) => {
+    try {
+      setLoading(true);
+      const res = await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}cervical/getPatientCountsForGraphForCervicalCancer?timeFrame=${timeFrame}`
+      });
+
+      if (res) {
+        setCervicalCancerVisit(res?.totalData);
+      } else {
+        setErrors('No data found');
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching :', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deletePatient = async (id) => {
+    setLoading(true);
+    try {
+      const res = await fetchData({
+        method: 'POST',
+        url: `${conf.apiBaseUrl}cervical/deleteCervicalCancerPatient/${id}`
+      });
+      if (res) {
+        setDeletePatientData(res?.message);
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error deleting:', error);
+    }
+  };
+
   return {
     fetchAllCervicalCancer,
     cervicalCancerData,
     fetchFilterData,
     loading,
     cervicalCancerCount,
-    fetchCervicalCancerCount
+    fetchCervicalCancerCount,
+    fetchCervicalCancerById,
+    cervicalCancerDetails,
+    modifyCervicalCancer,
+    updateCervicalCancer,
+    fetchGraphData,
+    cervicalCancerVisit,
+    centerCountData,
+    errors,
+    fetchCervicalCancerCenterCount,
+    deletePatient,
+    deletePatientData
   };
 };
 

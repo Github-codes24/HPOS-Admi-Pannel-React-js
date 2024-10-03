@@ -2,6 +2,7 @@ import React from 'react';
 import TableBreastCancer from './TableBreastCancer';
 import VisitGraph from './Visitgraph';
 import CountingData from './CountingData';
+import CenterCount from './CenterCount'
 
 const BreastCancerPage = () => {
 
@@ -11,6 +12,7 @@ const BreastCancerPage = () => {
             <div className="flex-1">
                 <CountingData />
                 <VisitGraph />
+                <CenterCount/>
                 <TableBreastCancer />
             </div>
         </div>

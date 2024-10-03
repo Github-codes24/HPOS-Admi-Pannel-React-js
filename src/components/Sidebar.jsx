@@ -23,11 +23,11 @@ const Sidebar = ({toggleSidebar, isSidebarVisible, setActiveTab }) => {
   //   }
   // };
 
-  // const logoutBtn = () => {
-  //   localStorage.removeItem('token');
-  //   setLoggedOut(true);
-  //   window.location.reload();
-  // };
+  const logoutBtn = () => {
+    localStorage.removeItem('token');
+    setLoggedOut(true);
+    window.location.reload();
+  };
 
   // useEffect(() => {
   //   if (loggedOut) {

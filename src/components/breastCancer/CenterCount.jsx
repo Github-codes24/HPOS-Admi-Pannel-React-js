@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import useCandidates from '../../hooks/candidateData';
+import useBreastCancer from '../../hooks/useBreastCancer';
 
 const CenterCount = () => {
     const [viewMore, setViewMore] = useState(false);
-    const {fetchCandidatesCenterCount, centerCountData} = useCandidates();
-    console.log("centerCountData", centerCountData)
+    const {fetchBreastCancerCenterCount, centerCountData} = useBreastCancer();
+    console.log("Breast centerCountData", centerCountData)
 
     useEffect(() => {
-        fetchCandidatesCenterCount();
+        fetchBreastCancerCenterCount();
     }, [])
 
     const handleSelectChange = (e) => {

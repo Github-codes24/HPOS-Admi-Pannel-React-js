@@ -1,22 +1,35 @@
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import conf from '../config/index';
-import { allBreastCancerCountAtom, allBreastCancerAtom } from '../state/breastCancerState'; // Ensure correct import of atoms
+import {
+  allBreastCancerCountAtom,
+  allBreastCancerAtom,
+  breastCancerDetailIDAtom,
+  breastCancerVisitAtom,
+  breastCancerCenterCountAtom
+} from '../state/breastCancerState'; // Ensure correct import of atoms
+import { toastState } from '../state/toastState';
 import useFetch from './useFetch';
 
 const useBreastCancer = () => {
   const [fetchData] = useFetch(); // Custom fetch hook
   const [loading, setLoading] = useState(true); // Loading state
+  const [errors, setErrors] = useState('');
   const [breastCancerCount, setBreastCancerCount] = useRecoilState(allBreastCancerCountAtom); // Correct atom for count
   const [breastCancerData, setBreastCancerData] = useRecoilState(allBreastCancerAtom); // Correct atom for data
+  const [modifyBreastCancer, setModifyBreastCancer] = useRecoilState(toastState);
+  const [breastCancerDetails, setBreastCancerDatails] = useRecoilState(breastCancerDetailIDAtom);
+  const [breastCancerVisit, setBreastCancerVisit] = useRecoilState(breastCancerVisitAtom);
+  const [deletePatientData, setDeletePatientData] = useRecoilState(toastState);
+  const [centerCountData, setCenterCountData] = useRecoilState(breastCancerCenterCountAtom);
 
   // Fetch Breast Cancer Patient Count
-  const fetchBreastCancerCount = async () => {
+  const fetchBreastCancerCount = async (fromDate, toDate) => {
     setLoading(true);
     try {
       const res = await fetchData({
         method: 'GET',
-        url: `${conf.apiBaseUrl}breastCancer/getAllPatientsCount` // Correct URL with template literal
+        url: `${conf.apiBaseUrl}breastCancer/getAllPatientsCount?fromDate=${fromDate}&toDate=${toDate}` // Correct URL with template literal
       });
       if (res) {
         setBreastCancerCount(res); // Set the count from response
@@ -45,6 +58,24 @@ const useBreastCancer = () => {
       console.error('Error fetching getAllPatients:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchBreastCancerCenterCount = async () => {
+    setLoading(true);
+    try {
+      // Send a GET request to fetch the getAllPatients dropdown data
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}breastCancer/getCenterCountsForBreastCancer`
+      }).then((res) => {
+        if (res) {
+          setCenterCountData(res?.totalData);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching getAllPatients:', error);
     }
   };
 
@@ -77,14 +108,99 @@ const useBreastCancer = () => {
     }
   };
 
+  const fetchBreastCancerById = async (id) => {
+    setLoading(true);
+    try {
+      const res = await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}breastCancer/getBreastCancerPatientById/${id}`
+      });
+      if (res) {
+        setBreastCancerDatails(res?.data);
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching branches :', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateBreastCancer = async (id, updateData) => {
+    setLoading(true);
+    try {
+      fetchData({
+        method: 'PUT',
+        url: `${conf.apiBaseUrl}breastCancer/updateBreastCancerPatient/${id}`,
+        data: updateData
+      }).then((res) => {
+        if (res) {
+          setModifyBreastCancer(res?.message);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error updating email template:', error);
+      setLoading(false);
+    }
+  };
+
+  const fetchGraphData = async (timeFrame) => {
+    try {
+      setLoading(true);
+      const res = await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}breastCancer/getPatientCountsForGraphBreastCancer?timeFrame=${timeFrame}`
+      });
+
+      if (res) {
+        setBreastCancerVisit(res?.totalData);
+      } else {
+        setErrors('No data found');
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching :', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deletePatient = async (id) => {
+    setLoading(true);
+    try {
+      const res = await fetchData({
+        method: 'POST',
+        url: `${conf.apiBaseUrl}breastCancer/deleteBreastCancerPatient/${id}`
+      });
+      if (res) {
+        setDeletePatientData(res?.message);
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error deleting:', error);
+    }
+  };
+
   // Return values and functions
   return {
     fetchAllBreastCancerPatients, // Fetch data function
     fetchFilterData,
     breastCancerData, // Breast Cancer patient data
     loading, // Loading state
-    breastCancerCount, // Breast Cancer count
-    fetchBreastCancerCount // Fetch count function
+    breastCancerCount,
+    fetchBreastCancerCount, // Fetch count function
+    fetchBreastCancerById,
+    updateBreastCancer,
+    centerCountData,
+    breastCancerDetails,
+    modifyBreastCancer,
+    fetchBreastCancerCenterCount,
+    fetchGraphData,
+    breastCancerVisit,
+    errors,
+    deletePatient,
+    deletePatientData
   };
 };
 

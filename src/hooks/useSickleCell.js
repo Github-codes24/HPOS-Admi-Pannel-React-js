@@ -1,31 +1,41 @@
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import conf from '../config/index';
-import { allCandidateDataAtom, allSickleCellCountAtom } from '../state/sickleCellState';
+import {
+  allSickleCellCountAtom,
+  sickleCellCenterCountAtom,
+  sickleCellDataAtom,
+  sickleCellDetailIDAtom,
+  sickleCellReportAtom,
+  sickleCelVisitAtom
+} from '../state/sickleCellState';
+import { toastState } from '../state/toastState';
 import useFetch from './useFetch';
 
 const useSickleCell = () => {
   const [fetchData] = useFetch();
   const [loading, setLoading] = useState(true);
-  const [sickleCellData, setSickleCellData] = useRecoilState(allCandidateDataAtom);
+  const [errors, setErrors] = useState('');
+  const [sickleCellData, setSickleCellData] = useRecoilState(sickleCellDataAtom);
   const [sickleCellCount, setSickleCellCount] = useRecoilState(allSickleCellCountAtom);
+  const [modifySickleCell, setModifySickleCell] = useRecoilState(toastState);
+  const [sickleCellDetails, setSickleCellDatails] = useRecoilState(sickleCellDetailIDAtom);
+  const [sickleCellReport, setSickleCellReport] = useRecoilState(sickleCellReportAtom);
+  const [sickleCellVisit, setSickleCelVisit] = useRecoilState(sickleCelVisitAtom);
+  const [deletePatientData, setDeletePatientData] = useRecoilState(toastState);
+  const [centerCountData, setCenterCountData] = useRecoilState(sickleCellCenterCountAtom);
 
   const fetchSickleCellCount = async () => {
     setLoading(true);
     try {
-      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}sickleCell/getAllPatientsCount` })
-        .then((res) => {
-          if (res) {
-            setSickleCellCount(res);
-          }
-        })
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.error('Error fetching getAllPatients:', error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}sickleCell/getAllPatientsCount`
+      }).then((res) => {
+        if (res) {
+          setSickleCellCount(res);
+        }
+      });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching getAllPatients:', error);
@@ -35,21 +45,33 @@ const useSickleCell = () => {
   const fetchAllSickleCell = async () => {
     setLoading(true);
     try {
-      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}sickleCell/getAllPatients` })
-        .then((res) => {
+      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}sickleCell/getAllPatients` }).then(
+        (res) => {
           // eslint-disable-next-line no-console
           console.log('sickleCell res', res);
           if (res) {
             setSickleCellData(res?.data);
           }
-        })
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.error('Error fetching getAllPatients:', error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+        }
+      );
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching getAllPatients:', error);
+    }
+  };
+
+  const fetchSickleCellCenterCount = async () => {
+    setLoading(true);
+    try {
+      // Send a GET request to fetch the getAllPatients dropdown data
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}sickleCell/getCenterCountsForSickleCellCancer`
+      }).then((res) => {
+        if (res) {
+          setCenterCountData(res);
+        }
+      });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching getAllPatients:', error);
@@ -85,13 +107,118 @@ const useSickleCell = () => {
     }
   };
 
+  const fetchSickleCellById = async (id) => {
+    setLoading(true);
+    try {
+      const res = await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}sickleCell/getSickleCellPatientById/${id}`
+      });
+      if (res) {
+        setSickleCellDatails(res?.data);
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching branches :', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateSickleCell = async (id, updateData) => {
+    setLoading(true);
+    try {
+      fetchData({
+        method: 'PUT',
+        url: `${conf.apiBaseUrl}sickleCell/updateSickleCellPatient/${id}`,
+        data: updateData
+      }).then((res) => {
+        if (res) {
+          setModifySickleCell(res?.message);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error updating email template:', error);
+      setLoading(false);
+    }
+  };
+
+  const fetchSickleCellReport = async () => {
+    setLoading(true);
+    try {
+      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}sickleCell/candidatesReport` }).then(
+        (res) => {
+          // eslint-disable-next-line no-console
+          console.log('sickleCell res', res);
+          if (res) {
+            setSickleCellReport(res);
+          }
+        }
+      );
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching getAllPatients:', error);
+    }
+  };
+
+  const fetchGraphData = async (timeFrame) => {
+    try {
+      setLoading(true);
+      const res = await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}sickleCell/getPatientCountsForGraphForSickleCellCancer?timeFrame=${timeFrame}`
+      });
+
+      if (res) {
+        setSickleCelVisit(res?.totalData);
+      } else {
+        setErrors('No data found');
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching :', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deletePatient = async (id) => {
+    setLoading(true);
+    try {
+      const res = await fetchData({
+        method: 'POST',
+        url: `${conf.apiBaseUrl}sickleCell/deleteSickleCellPatient/${id}`
+      });
+      if (res) {
+        setDeletePatientData(res?.message);
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error deleting:', error);
+    }
+  };
+
   return {
     fetchAllSickleCell,
     fetchFilterData,
     sickleCellData,
     loading,
     sickleCellCount,
-    fetchSickleCellCount
+    fetchSickleCellCount,
+    updateSickleCell,
+    modifySickleCell,
+    sickleCellDetails,
+    fetchSickleCellById,
+    sickleCellReport,
+    fetchSickleCellReport,
+    sickleCellVisit,
+    fetchGraphData,
+    fetchSickleCellCenterCount,
+    centerCountData,
+    errors,
+    deletePatient,
+    deletePatientData
   };
 };
 

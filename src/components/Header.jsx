@@ -1,20 +1,29 @@
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { fromDateCountAtom, toDateCountAtom } from '../state/cervicalCancerState';
+import useCandidates from '../hooks/candidateData';
+import useBreastCancer from '../hooks/useBreastCancer';
+import useCervicalCancer from '../hooks/useCervicalCancer';
+import useSickleCell from '../hooks/useSickleCell';
 
-const Header = ({ activeTab, onSearch}) => {
-//     const [fromDate, setFromDate] = useState('');
-//   const [toDate, setToDate] = useState('');
+const Header = ({ activeTab, onSearch }) => {
+    const { fetchCandidateCount } = useCandidates();
+    const { fetchBreastCancerCount } = useBreastCancer();
+    const { fetchCervicalCancerCount } = useCervicalCancer();
+    const { fetchSickleCellCount } = useSickleCell();
     const [fromDate, setFromDate] = useRecoilState(fromDateCountAtom);
     const [toDate, setToDate] = useRecoilState(toDateCountAtom);
     const [error, setError] = useState('');
 
     const handleSearch = () => {
         setError('');
-        console.log('onSearch', onSearch,fromDate, toDate)
-        if (onSearch) {
-            onSearch({fromDate, toDate });
-        }
+        fetchCandidateCount(fromDate, toDate);
+        fetchBreastCancerCount(fromDate, toDate)
+        fetchCervicalCancerCount(fromDate, toDate);
+        fetchSickleCellCount(fromDate, toDate)
+        // if (onSearch) {
+        //     onSearch({fromDate, toDate });
+        // }
         setFromDate(fromDate);
         setToDate(toDate);
     };

@@ -8,6 +8,11 @@ import SickleCell from './components/sickleCell/SickleCellPage';
 import BreastCancer from './components/breastCancer/BreastCancerPage';;
 import DashboardPage from './components/dashboard/DashboardPage';
 import CervicalCancerPage from './components/cervicalCancer/CervicalCancerPage';
+import EditDashboardPage from './components/dashboard/EditDashboardPage';
+import EditSickleCellPage from './components/sickleCell/EditSickleCellPage';
+import EditBreastCancer from './components/breastCancer/EditBreastCancer';
+import EditCervicalCancer from './components/cervicalCancer/EditCervicalCancer';
+import EditResultPage from './components/dashboard/EditResultPage';
 
 function App() {
   const [activeTab, setActiveTab] = useState('Dashboard');
@@ -33,12 +38,51 @@ function App() {
             />
 
             <Route
+              path="/edit-dashboard/:id"
+              element={
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+                  <ErrorBoundary>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <EditDashboardPage />
+                    </Suspense>
+                  </ErrorBoundary>
+                </MainLayout>
+              }
+            />
+
+            <Route
+              path="/edit-result-dashboard"
+              element={
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+                  <ErrorBoundary>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <EditResultPage />
+                    </Suspense>
+                  </ErrorBoundary>
+                </MainLayout>
+              }
+            />
+
+            <Route
               path="/sickle-cell"
               element={
                 <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
                   <ErrorBoundary>
                     <Suspense fallback={<div>Loading...</div>}>
                       <SickleCell />
+                    </Suspense>
+                  </ErrorBoundary>
+                </MainLayout>
+              }
+            />
+
+            <Route
+              path="/edit-sickle-cell/:id"
+              element={
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+                  <ErrorBoundary>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <EditSickleCellPage />
                     </Suspense>
                   </ErrorBoundary>
                 </MainLayout>
@@ -59,6 +103,19 @@ function App() {
             />
 
             <Route
+              path="/edit-breast-cancer/:id"
+              element={
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+                  <ErrorBoundary>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <EditBreastCancer />
+                    </Suspense>
+                  </ErrorBoundary>
+                </MainLayout>
+              }
+            />
+
+            <Route
               path="/cervical-cancer"
               element={
                 <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
@@ -70,6 +127,20 @@ function App() {
                 </MainLayout>
               }
             />
+
+            <Route
+              path="/edit-cervical-cancer/:id"
+              element={
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+                  <ErrorBoundary>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <EditCervicalCancer />
+                    </Suspense>
+                  </ErrorBoundary>
+                </MainLayout>
+              }
+            />
+
 
           </Route>
         </Routes>

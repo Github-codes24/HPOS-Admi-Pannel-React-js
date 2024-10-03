@@ -32,7 +32,7 @@ const PatientData = () => {
                         <th className="border px-4 py-2">Name</th>
                         <th className="border px-4 py-2">Date</th>
                         <th className="border px-4 py-2">Center Code</th>
-                        <th className="border px-4 py-2">Blood Status</th>
+                        <th className="border px-4 py-2">Blood Group</th>
                         <th className="border px-4 py-2">Result Status</th>
                         <th className="border px-4 py-2">HPLC</th>
                         <th className="border px-4 py-2">Card Status</th>
@@ -170,7 +170,7 @@ const PatientData = () => {
                     <div className="  items-center">
                         <div className="collapse collapse-arrow w-56">
                             <input type="checkbox" />
-                            <div className="collapse-title text-sm  font-medium">Blood Status</div>
+                            <div className="collapse-title text-sm  font-medium">Blood Group</div>
                             <div className="collapse-content">
                                 <label
                                     className="input input-sm w-40 input-bordered flex items-center gap-2">

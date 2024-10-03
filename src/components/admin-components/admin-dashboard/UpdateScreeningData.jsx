@@ -35,7 +35,7 @@ const UpdateScreeningData = () => {
                             <th>Marital Status</th>
                             <th>Center Code</th>
                             <th>Age</th>
-                            <th>Blood Status</th>
+                            <th>Blood Group</th>
                             <th>Category</th>
                             <th>Caste</th>
                             <th>Location</th>

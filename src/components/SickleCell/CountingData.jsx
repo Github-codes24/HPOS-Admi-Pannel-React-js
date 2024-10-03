@@ -8,7 +8,7 @@ const CountingData = () => {
   const { fetchSickleCellCount, sickleCellCount } = useSickleCell();
 
   useEffect(() => {
-    fetchSickleCellCount();
+    fetchSickleCellCount( '', '');
 }, []);
 
   const stats = [

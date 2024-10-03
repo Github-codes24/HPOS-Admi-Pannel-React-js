@@ -2,32 +2,39 @@
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import conf from '../config/index';
-import { allCandidateDataAtom, allCandidatesCountAtom } from '../state/candidateData';
+import {
+  allCandidateDataAtom,
+  allCandidatesCountAtom,
+  candidateCenterCountAtom,
+  candidateDetailIDAtom,
+  candidateVisitAtom
+} from '../state/candidateData';
+import { toastState } from '../state/toastState';
 import useFetch from './useFetch';
 
 const useCandidates = () => {
   const [fetchData] = useFetch();
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState('');
   const [candidates, setCandidates] = useRecoilState(allCandidateDataAtom);
-  // const [totalCount, setTotalCount] = useRecoilState(0)
+  const [modifyCandidates, setModifyCandidates] = useRecoilState(toastState);
+  const [deletePatientData, setDeletePatientData] = useRecoilState(toastState);
   const [candidateCount, setCandidateCount] = useRecoilState(allCandidatesCountAtom);
+  const [candidateDetails, setCandidateDatails] = useRecoilState(candidateDetailIDAtom);
+  const [candidateVisit, setCandidateVisit] = useRecoilState(candidateVisitAtom);
+  const [centerCountData, setCenterCountData] = useRecoilState(candidateCenterCountAtom);
 
-  const fetchCandidateCount = async () => {
+  const fetchCandidateCount = async (fromDate, toDate) => {
     setLoading(true);
     try {
-      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}admin/getAllPatientsCount` })
-        .then((res) => {
-          if (res) {
-            setCandidateCount(res);
-          }
-        })
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.error('Error fetching getAllPatients:', error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}admin/getAllPatientsCount?fromDate=${fromDate}&toDate=${toDate}`
+      }).then((res) => {
+        if (res) {
+          setCandidateCount(res);
+        }
+      });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching getAllPatients:', error);
@@ -38,22 +45,31 @@ const useCandidates = () => {
     setLoading(true);
     try {
       // Send a GET request to fetch the getAllPatients dropdown data
-      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}admin/getAllPatients` })
-        .then((res) => {
-          // eslint-disable-next-line no-console
-          console.log('res', res);
+      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}admin/getAllPatients` }).then(
+        (res) => {
           if (res) {
             setCandidates(res?.totalData);
           }
-        })
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.error('Error fetching getAllPatients:', error);
-        })
-        .finally(() => {
-          // Set loading state to false to indicate that the asynchronous operation is complete.
-          setLoading(false);
-        });
+        }
+      );
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching getAllPatients:', error);
+    }
+  };
+
+  const fetchCandidatesCenterCount = async () => {
+    setLoading(true);
+    try {
+      // Send a GET request to fetch the getAllPatients dropdown data
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}admin/getCenterCountsByCenterAndDate`
+      }).then((res) => {
+        if (res) {
+          setCenterCountData(res?.totalData);
+        }
+      });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching getAllPatients:', error);
@@ -89,13 +105,104 @@ const useCandidates = () => {
     }
   };
 
+  const fetchCandidatesById = async (id) => {
+    try {
+      // Set loading state to true
+      setLoading(true);
+
+      // Fetch the branch details from the API
+      const res = await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}admin/getPatientById/${id}`
+      });
+
+      // If the response contains data, update the branch details state
+      if (res?.data) {
+        setCandidateDatails(res?.data);
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching  :', error);
+    } finally {
+      // Set loading state to false after the request is complete
+      setLoading(false);
+    }
+  };
+
+  const updateCandidates = async (id, updateData) => {
+    setLoading(true);
+    try {
+      fetchData({
+        method: 'PUT',
+        url: `${conf.apiBaseUrl}admin/updatePatient/${id}`,
+        data: updateData
+      }).then((res) => {
+        if (res) {
+          setModifyCandidates(res?.message);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error updating email template:', error);
+      setLoading(false);
+    }
+  };
+
+  const fetchGraphData = async (timeFrame) => {
+    try {
+      setLoading(true);
+      const res = await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}admin/getPatientCountsForGraph?timeFrame=${timeFrame}`
+      });
+      if (res) {
+        setCandidateVisit(res?.totalData);
+      } else {
+        setErrors('No data found');
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching  :', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deletePatient = async (id) => {
+    setLoading(true);
+    try {
+      const res = await fetchData({
+        method: 'POST',
+        url: `${conf.apiBaseUrl}admin/deletePatient/${id}`
+      });
+      if (res) {
+        setDeletePatientData(res?.message);
+        fetchAllCandidates();
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error deleting:', error);
+    }
+  };
+
   return {
     fetchAllCandidates,
     fetchFilterData,
     candidates,
     loading,
     fetchCandidateCount,
-    candidateCount
+    candidateCount,
+    fetchCandidatesById,
+    candidateDetails,
+    updateCandidates,
+    modifyCandidates,
+    fetchGraphData,
+    candidateVisit,
+    errors,
+    fetchCandidatesCenterCount,
+    centerCountData,
+    deletePatient,
+    deletePatientData
   };
 };
 export default useCandidates;
