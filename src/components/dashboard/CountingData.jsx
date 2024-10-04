@@ -15,7 +15,6 @@ const CountingData = () => {
     }, []);
 
     const onView = () => {
-        console.log('Navigating to /view-dashboard-page'); // Debugging log
         navigate('/view-dashboard-page');
     }
 

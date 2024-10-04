@@ -1,15 +1,14 @@
 import React, { useEffect, useRef } from 'react'
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import useCandidates from '../../hooks/candidateData';
 import useCities from '../../hooks/useCities';
 import Select from 'react-select';
 import FileSaver from "file-saver";
 import * as XLSX from 'xlsx';
+import useBreastCancer from '../../hooks/useBreastCancer';
 
-
-const ViewDashboardPage = () => {
-  const { fetchSubmiitedCandidates, submittedCandidates, fetchSubmittedFilterData } = useCandidates();
+const ViewBreastCancerPage = () => {
+  const { fetchSubmiitedBreastCancer, submittedBreastCancer, fetchSubmittedFilterData } = useBreastCancer();
   const { fetchCities, getCities } = useCities();
   const dialogRef = useRef(null);
   const closeDialog = () => {
@@ -17,7 +16,7 @@ const ViewDashboardPage = () => {
   };
 
   useEffect(() => {
-    fetchSubmiitedCandidates();
+    fetchSubmiitedBreastCancer();
     fetchCities();
   }, [])
 
@@ -50,8 +49,8 @@ const ViewDashboardPage = () => {
   });
 
   const downloadSubmittedCandidate = () => {
-    if (submittedCandidates && submittedCandidates.length > 0) {
-      const data = submittedCandidates.map(candidate => ({
+    if (submittedBreastCancer && submittedBreastCancer.length > 0) {
+      const data = submittedBreastCancer.map(candidate => ({
         "Personal Name": candidate.personalName,
         "Age": candidate.age,
         "Gender": candidate.gender,
@@ -77,11 +76,11 @@ const ViewDashboardPage = () => {
         "Cast": candidate.caste,
         "Category": candidate.category,
       }));
-  
+
       const worksheet = XLSX.utils.json_to_sheet(data);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Candidate Details");
-  
+
       const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
       const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
       FileSaver.saveAs(blob, `submitted_candidates.xlsx`);
@@ -89,12 +88,10 @@ const ViewDashboardPage = () => {
       console.error("Candidate details not available.");
     }
   };
-  
 
   const cityOptions = getCities?.flat().map(city => ({
     value: city, label: city
   }));
-
   return (
     <>
       <div className="container mx-auto p-4">
@@ -129,7 +126,7 @@ const ViewDashboardPage = () => {
           </thead>
           <tbody>
 
-            {submittedCandidates?.map((item, index) => (
+            {submittedBreastCancer?.map((item, index) => (
               <tr key={index}>
                 <td className="border px-4 py-2">{index + 1}</td>
                 <td className="border px-4 py-2">{item.UID}</td>
@@ -140,7 +137,7 @@ const ViewDashboardPage = () => {
                 <td className="border px-4 py-2">{new Date(item.createdAt).toLocaleDateString('en-GB')}</td>
               </tr>
             ))}
-            {submittedCandidates.length === 0 && (
+            {submittedBreastCancer && submittedBreastCancer.length === 0 && (
               <tr>
                 <td colSpan="7" className="border px-4 py-2 text-center">No candidates submitted.</td>
               </tr>
@@ -255,7 +252,7 @@ const ViewDashboardPage = () => {
         </form>
       </dialog>
     </>
-  );
+  )
 }
 
-export default ViewDashboardPage;
+export default ViewBreastCancerPage

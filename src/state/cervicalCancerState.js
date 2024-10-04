@@ -8,6 +8,12 @@ export const allCervicalCancerDataAtom = atom({
   effects_UNSTABLE: [persistAtom]
 });
 
+export const submittedCervicalCancerAtom = atom({
+  key: 'submittedCervicalCancer',
+  default: [],
+  effects_UNSTABLE: [persistAtom]
+});
+
 export const allCervicalCancerCountAtom = atom({
   key: 'cervicalCancerCount',
   default: null

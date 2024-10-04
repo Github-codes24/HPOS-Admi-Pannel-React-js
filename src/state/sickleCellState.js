@@ -8,6 +8,12 @@ export const sickleCellDataAtom = atom({
   effects_UNSTABLE: [persistAtom]
 });
 
+export const submittedSickleCellAtom = atom({
+  key: 'submittedSickleCell',
+  default: [],
+  effects_UNSTABLE: [persistAtom]
+});
+
 export const allSickleCellCountAtom = atom({
   key: 'sickleCellsCount',
   default: null

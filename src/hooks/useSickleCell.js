@@ -7,7 +7,8 @@ import {
   sickleCellDataAtom,
   sickleCellDetailIDAtom,
   sickleCellReportAtom,
-  sickleCelVisitAtom
+  sickleCelVisitAtom,
+  submittedSickleCellAtom
 } from '../state/sickleCellState';
 import { toastState } from '../state/toastState';
 import useFetch from './useFetch';
@@ -17,6 +18,7 @@ const useSickleCell = () => {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState('');
   const [sickleCellData, setSickleCellData] = useRecoilState(sickleCellDataAtom);
+  const [submittedSickleCell, setSubmittedSickleCell] = useRecoilState(submittedSickleCellAtom);
   const [sickleCellCount, setSickleCellCount] = useRecoilState(allSickleCellCountAtom);
   const [modifySickleCell, setModifySickleCell] = useRecoilState(toastState);
   const [sickleCellDetails, setSickleCellDatails] = useRecoilState(sickleCellDetailIDAtom);
@@ -106,6 +108,49 @@ const useSickleCell = () => {
       console.error('Error fetching filter data:', error);
     }
   };
+
+  const fetchSubmiitedSickleCell = async () => {
+    setLoading(true);
+    try {
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}sickleCell/getAllPatientsForSubmittedForSickleCellCancer`
+      }).then((res) => {
+        if (res) {
+          setSubmittedSickleCell(res?.totalData);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching getAllPatients:', error);
+    }
+  };
+
+  const fetchSubmittedFilterData = async (filters) => {
+    try {
+      if (!filters) {
+        throw new Error('No filters provided');
+      }
+      const params = new URLSearchParams(filters).toString();
+      const url = `${conf.apiBaseUrl}sickleCell/getAllPatientsForSubmittedForSickleCellCancer?${params}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setSubmittedSickleCell(data?.totalData);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching filter data:', error);
+    }
+  };
+
 
   const fetchSickleCellById = async (id) => {
     setLoading(true);
@@ -200,8 +245,8 @@ const useSickleCell = () => {
   };
 
   return {
-    fetchAllSickleCell,
-    fetchFilterData,
+    fetchAllSickleCell, fetchSubmittedFilterData, fetchSubmiitedSickleCell,
+    fetchFilterData, submittedSickleCell,
     sickleCellData,
     loading,
     sickleCellCount,

@@ -6,7 +6,8 @@ import {
   allCervicalCancerDataAtom,
   cervicalCancerCenterCountAtom,
   cervicalCancerDetailIDAtom,
-  cervicalCancerVisitAtom
+  cervicalCancerVisitAtom,
+  submittedCervicalCancerAtom
 } from '../state/cervicalCancerState';
 import { toastState } from '../state/toastState';
 import useFetch from './useFetch';
@@ -16,6 +17,7 @@ const useCervicalCancer = () => {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState('');
   const [cervicalCancerData, setCervicalCancerData] = useRecoilState(allCervicalCancerDataAtom);
+  const [submittedCervicalCancer, setSubmittedCervicalCancer] = useRecoilState(submittedCervicalCancerAtom);
   const [cervicalCancerCount, setCervicalCancerCount] = useRecoilState(allCervicalCancerCountAtom);
   const [modifyCervicalCancer, setModifyCervicalCancer] = useRecoilState(toastState);
   const [cervicalCancerDetails, setCervicalCancerDatails] = useRecoilState(
@@ -111,6 +113,48 @@ const useCervicalCancer = () => {
     }
   };
 
+  const fetchSubmiitedCervicalCancer = async () => {
+    setLoading(true);
+    try {
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}cervical/getAllPatientsForSubmittedForCervicalCancer`
+      }).then((res) => {
+        if (res) {
+          setSubmittedCervicalCancer(res?.totalData);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching getAllPatients:', error);
+    }
+  };
+
+  const fetchSubmittedFilterData = async (filters) => {
+    try {
+      if (!filters) {
+        throw new Error('No filters provided');
+      }
+      const params = new URLSearchParams(filters).toString();
+      const url = `${conf.apiBaseUrl}cervical/getAllPatientsForSubmittedForCervicalCancer?${params}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setSubmittedCervicalCancer(data?.totalData);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching filter data:', error);
+    }
+  };
+
   const fetchCervicalCancerById = async (id) => {
     setLoading(true);
     try {
@@ -186,8 +230,8 @@ const useCervicalCancer = () => {
   };
 
   return {
-    fetchAllCervicalCancer,
-    cervicalCancerData,
+    fetchAllCervicalCancer, fetchSubmiitedCervicalCancer, fetchSubmittedFilterData,
+    cervicalCancerData, submittedCervicalCancer,
     fetchFilterData,
     loading,
     cervicalCancerCount,

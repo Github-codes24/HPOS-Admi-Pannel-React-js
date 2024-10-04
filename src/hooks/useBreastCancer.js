@@ -6,7 +6,8 @@ import {
   allBreastCancerAtom,
   breastCancerDetailIDAtom,
   breastCancerVisitAtom,
-  breastCancerCenterCountAtom
+  breastCancerCenterCountAtom,
+  submittedBreastCancerAtom
 } from '../state/breastCancerState'; // Ensure correct import of atoms
 import { toastState } from '../state/toastState';
 import useFetch from './useFetch';
@@ -17,6 +18,7 @@ const useBreastCancer = () => {
   const [errors, setErrors] = useState('');
   const [breastCancerCount, setBreastCancerCount] = useRecoilState(allBreastCancerCountAtom); // Correct atom for count
   const [breastCancerData, setBreastCancerData] = useRecoilState(allBreastCancerAtom); // Correct atom for data
+  const [submittedBreastCancer, setSubmittedBreastCancer] = useRecoilState(submittedBreastCancerAtom); // Correct atom for data
   const [modifyBreastCancer, setModifyBreastCancer] = useRecoilState(toastState);
   const [breastCancerDetails, setBreastCancerDatails] = useRecoilState(breastCancerDetailIDAtom);
   const [breastCancerVisit, setBreastCancerVisit] = useRecoilState(breastCancerVisitAtom);
@@ -108,6 +110,48 @@ const useBreastCancer = () => {
     }
   };
 
+  const fetchSubmiitedBreastCancer = async () => {
+    setLoading(true);
+    try {
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}breastCancer/getAllPatientsForSubmittedForBreastCancer`
+      }).then((res) => {
+        if (res) {
+          setSubmittedBreastCancer(res?.totalData);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching getAllPatients:', error);
+    }
+  };
+
+  const fetchSubmittedFilterData = async (filters) => {
+    try {
+      if (!filters) {
+        throw new Error('No filters provided');
+      }
+      const params = new URLSearchParams(filters).toString();
+      const url = `${conf.apiBaseUrl}breastCancer/getAllPatientsForSubmittedForBreastCancer?${params}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setSubmittedBreastCancer(data?.totalData);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching filter data:', error);
+    }
+  };
+
   const fetchBreastCancerById = async (id) => {
     setLoading(true);
     try {
@@ -184,8 +228,8 @@ const useBreastCancer = () => {
 
   // Return values and functions
   return {
-    fetchAllBreastCancerPatients, // Fetch data function
-    fetchFilterData,
+    fetchAllBreastCancerPatients,submittedBreastCancer, fetchSubmiitedBreastCancer,
+    fetchFilterData, fetchSubmittedFilterData,
     breastCancerData, // Breast Cancer patient data
     loading, // Loading state
     breastCancerCount,
