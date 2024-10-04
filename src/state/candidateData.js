@@ -14,6 +14,12 @@ export const allCandidateDataAtom = atom({
   effects_UNSTABLE: [persistAtom]
 });
 
+export const submittedCandidateAtom = atom({
+  key: 'submittedCandidate',
+  default: [],
+  effects_UNSTABLE: [persistAtom]
+});
+
 export const allCandidatesCountAtom = atom({
   key: 'candidatesCount',
   default: null

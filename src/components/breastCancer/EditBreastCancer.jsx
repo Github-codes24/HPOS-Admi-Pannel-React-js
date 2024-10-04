@@ -243,11 +243,8 @@ const EditBreastCancer = () => {
                             <label style={labelStyle}>
                                 Result Status:
                                 <Field as="select" name="resultStatus" onChange={handleChange} onBlur={handleBlur} style={inputStyle}>
-                                    <option value="Normal(HbAA)">Normal (HbAA)</option>
-                                    <option value="Sickle Cell Trait(HbAS)">Sickle Cell Trait (HbAS)</option>
-                                    <option value="Sickle Cell Disease(HbSS)">Sickle Cell Disease (HbSS)</option>
-                                    <option value="low Hb">Low Hb</option>
-                                    <option value="Repeat">Repeat</option>
+                                <option value="Negative">Negative</option>
+                                <option value="Positive">Positive</option>
                                 </Field>
                             </label>
                         </div>

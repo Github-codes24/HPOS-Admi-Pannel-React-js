@@ -7,9 +7,13 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import CenterCount from './CenterCount';
+import FileSaver from "file-saver";
+import * as XLSX from 'xlsx';
 
 const SickleCellPage = () => {
-    const { fetchAllSickleCell, fetchFilterData, deletePatient, sickleCellData } = useSickleCell();
+    const { fetchAllSickleCell, fetchFilterData, deletePatient, sickleCellData,
+        fetchSickleCellById, sickleCellDetails
+     } = useSickleCell();
     console.log(sickleCellData);
     const navigate = useNavigate();
     const dialogRef = useRef(null);
@@ -20,6 +24,9 @@ const SickleCellPage = () => {
 
     useEffect(() => {
         fetchAllSickleCell();
+        if (sickleCellDetails) {
+            fetchSickleCellById(sickleCellDetails?._id)
+        }
     }, []);
 
     const formik = useFormik({
@@ -47,6 +54,46 @@ const SickleCellPage = () => {
             document.getElementById('filterdata').close(); // Close modal after submit
         },
     });
+
+    const downloadsickleCellDetails = () => {
+        if (sickleCellDetails) {
+            const data = [
+                {
+                    "Personal Name": sickleCellDetails?.personalName,
+                    "Age": sickleCellDetails?.age,
+                    "Gender": sickleCellDetails?.gender,
+                    "Address": `${sickleCellDetails?.address.house}, ${sickleCellDetails?.address.city}, ${sickleCellDetails?.address.district}, ${sickleCellDetails?.address.state}, ${sickleCellDetails?.address.pincode}`,
+                    "Mobile Number": sickleCellDetails?.mobileNumber,
+                    "Blood Status": sickleCellDetails?.bloodStatus,
+                    "Card Status": sickleCellDetails?.cardStatus,
+                    "Result Status": sickleCellDetails?.resultStatus,
+                    "Center Code": sickleCellDetails?.centerCode,
+                    "Center Name": sickleCellDetails?.centerName,
+                    "Created At": new Date(sickleCellDetails?.createdAt).toLocaleString(),
+                    "Is Under Blood Transfusion": sickleCellDetails?.isUnderBloodTransfusion ? 'Yes' : 'No',
+                    "Is Under Medication": sickleCellDetails?.isUnderMedication ? 'Yes' : 'No',
+                    "Marital Status": sickleCellDetails?.maritalStatus,
+                    "Family History": sickleCellDetails?.familyHistory ? 'Yes' : 'No',
+                    "Fathers Name": sickleCellDetails?.fathersName,
+                    "Mothers Name": sickleCellDetails?.motherName,
+                    "Sub Caste": sickleCellDetails?.subCaste,
+                    "ABHA Number": sickleCellDetails?.number,
+                    "Aadhaar Number": sickleCellDetails?.aadhaarNumber,
+                    "Cast": sickleCellDetails?.caste,
+                    "Category": sickleCellDetails?.category,
+                }
+            ];
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Candidate Details");
+
+            const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+            const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+            FileSaver.saveAs(blob, `candidate_${sickleCellDetails?._id}_details.xlsx`);
+        } else {
+            console.error("Candidate details not available.");
+        }
+    };
 
     const onEdit = (item) => {
         console.log('item', item)
@@ -105,7 +152,7 @@ const SickleCellPage = () => {
                                 </td>
                                 <td className={`border px-4 py-2 ${item.cardStatus === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>{item.cardStatus}</td>
                                 <td className="border px-4 py-2 flex justify-around gap-4">
-                                    <button className="text-black hover:text-gray-600">
+                                    <button className="text-black hover:text-gray-600" onClick={downloadsickleCellDetails}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
                                             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />

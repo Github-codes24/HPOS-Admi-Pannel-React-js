@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import useCandidates from '../../hooks/candidateData';
 import CountingData from './CountingData';
 import { useFormik } from 'formik';
@@ -7,16 +7,18 @@ import VisitGraph from './VisitGraph';
 import CenterCount from './CenterCount';
 import { useNavigate } from 'react-router-dom';
 import FileSaver from "file-saver";
+import * as XLSX from 'xlsx';
 
 const DashboardPage = () => {
     const { fetchAllCandidates, fetchFilterData, deletePatient, fetchCandidatesById,
-        candidateDetails, deletePatientData, candidates } = useCandidates();
+        candidateDetails, deletePatientData, candidates, genCenterCode,
+         generateCenterCode } = useCandidates();
     const navigate = useNavigate();
     const dialogRef = useRef(null);
     const closeDialog = () => {
         dialogRef.current.close();
     };
-
+    const [centerCodeInput, setCenterCodeInput] = useState('');
     useEffect(() => {
         fetchAllCandidates();
         if (candidateDetails) {
@@ -50,12 +52,52 @@ const DashboardPage = () => {
         },
     });
 
+    const handleCenterCodeChange = (event) => {
+        setCenterCodeInput(event.target.value);
+    };
+
+    const handleGenerateCenterCode = async () => {
+        const data = { centerName: centerCodeInput }; 
+        await generateCenterCode(data); 
+    };
+
     const downloadCandidateDetails = () => {
         if (candidateDetails) {
-            const details = `Name: ${candidateDetails?.personalName}\nAge: ${candidateDetails.age}\nGender: ${candidateDetails.gender}\nAddress: ${candidateDetails.address}\nStatus: ${candidateDetails.status}`;
+            const data = [
+                {
+                    "Personal Name": candidateDetails.personalName,
+                    "Age": candidateDetails.age,
+                    "Gender": candidateDetails.gender,
+                    "Address": `${candidateDetails.address.house}, ${candidateDetails.address.city}, ${candidateDetails.address.district}, ${candidateDetails.address.state}, ${candidateDetails.address.pincode}`,
+                    "Mobile Number": candidateDetails.mobileNumber,
+                    "Blood Status": candidateDetails.bloodStatus,
+                    "Card Status": candidateDetails.cardStatus,
+                    "Result Status": candidateDetails.resultStatus,
+                    "Center Code": candidateDetails.centerCode,
+                    "Center Name": candidateDetails.centerName,
+                    "Created At": new Date(candidateDetails.createdAt).toLocaleString(),
+                    "Is Under Blood Transfusion": candidateDetails.isUnderBloodTransfusion ? 'Yes' : 'No',
+                    "Is Under Medication": candidateDetails.isUnderMedication ? 'Yes' : 'No',
+                    "Marital Status": candidateDetails.maritalStatus,
+                    "Family History": candidateDetails.familyHistory ? 'Yes' : 'No',
+                    "Fathers Name": candidateDetails.fathersName,
+                    "Mothers Name": candidateDetails.motherName,
+                    "Sub Caste": candidateDetails.subCaste,
+                    "ABHA Number": candidateDetails.number,
+                    "Aadhaar Number": candidateDetails.aadhaarNumber,
+                    "Cast": candidateDetails.caste,
+                    "Category": candidateDetails.category,
+                }
+            ];
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Candidate Details");
 
-            const blob = new Blob([details], { type: "text/plain;charset=utf-8" });
-            FileSaver.saveAs(blob, `candidate_${candidateDetails?._id}_details.txt`);
+            const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+            const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+            FileSaver.saveAs(blob, `candidate_${candidateDetails?._id}_details.xlsx`);
+        } else {
+            console.error("Candidate details not available.");
         }
     };
 
@@ -72,7 +114,22 @@ const DashboardPage = () => {
     return (
         <>
             <CountingData />
-            {/* <div></div> */}
+            <div>
+                <label htmlFor="centerCode">Enter Center Name : </label>
+                <input
+                    type="text"
+                    id="centerCode"
+                    value={centerCodeInput}
+                    onChange={handleCenterCodeChange}
+                    placeholder="Enter center code here"
+                    style={{ padding: '0.5rem', margin: '0.5rem 0', border: '1px solid #ccc', borderRadius: '4px' }}
+                />
+                <button onClick={handleGenerateCenterCode}
+                style={{ backgroundColor: '#007bff', color: '#fff', padding: '0.5rem 1rem', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                 >
+                    Generate Center Code
+                </button>
+            </div>
             <VisitGraph />
             <CenterCount />
             <div className="container mx-auto p-4">
@@ -106,7 +163,7 @@ const DashboardPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {candidates.map((item, index) => (
+                        {candidates?.map((item, index) => (
                             <tr key={index}>
                                 <td className="border px-4 py-2 text-center">
                                     <input type="checkbox" />
@@ -148,7 +205,6 @@ const DashboardPage = () => {
             </div>
 
             {/* Filter Modal Start */}
-
             <dialog ref={dialogRef} id="filterdata" className="modal">
                 <div className="modal-box" style={{ width: '900px', height: '400px' }}>
                     <div className="flex justify-between">

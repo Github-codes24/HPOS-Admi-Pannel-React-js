@@ -7,7 +7,8 @@ import {
   allCandidatesCountAtom,
   candidateCenterCountAtom,
   candidateDetailIDAtom,
-  candidateVisitAtom
+  candidateVisitAtom,
+  submittedCandidateAtom
 } from '../state/candidateData';
 import { toastState } from '../state/toastState';
 import useFetch from './useFetch';
@@ -17,7 +18,9 @@ const useCandidates = () => {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState('');
   const [candidates, setCandidates] = useRecoilState(allCandidateDataAtom);
+  const [submittedCandidates, setSubmittedCandidates] = useRecoilState(submittedCandidateAtom);
   const [modifyCandidates, setModifyCandidates] = useRecoilState(toastState);
+  const [genCenterCode, setGenCenterCode] = useRecoilState(toastState);
   const [deletePatientData, setDeletePatientData] = useRecoilState(toastState);
   const [candidateCount, setCandidateCount] = useRecoilState(allCandidatesCountAtom);
   const [candidateDetails, setCandidateDatails] = useRecoilState(candidateDetailIDAtom);
@@ -57,25 +60,7 @@ const useCandidates = () => {
       console.error('Error fetching getAllPatients:', error);
     }
   };
-
-  const fetchCandidatesCenterCount = async () => {
-    setLoading(true);
-    try {
-      // Send a GET request to fetch the getAllPatients dropdown data
-      await fetchData({
-        method: 'GET',
-        url: `${conf.apiBaseUrl}admin/getCenterCountsByCenterAndDate`
-      }).then((res) => {
-        if (res) {
-          setCenterCountData(res?.totalData);
-        }
-      });
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error fetching getAllPatients:', error);
-    }
-  };
-
+  
   const fetchFilterData = async (filters) => {
     try {
       // Ensure filters are defined
@@ -102,6 +87,65 @@ const useCandidates = () => {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching filter data:', error);
+    }
+  };
+
+  const fetchSubmiitedCandidates = async () => {
+    setLoading(true);
+    try {
+      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}admin/getAllPatientsForSubmitted` }).then(
+        (res) => {
+          if (res) {
+            setSubmittedCandidates(res?.totalData);
+          }
+        }
+      );
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching getAllPatients:', error);
+    }
+  };
+
+  const fetchSubmittedFilterData = async (filters) => {
+    try {
+      if (!filters) {
+        throw new Error('No filters provided');
+      }
+      const params = new URLSearchParams(filters).toString();
+      const url = `${conf.apiBaseUrl}admin/getAllPatientsForSubmitted?${params}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setSubmittedCandidates(data?.totalData);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching filter data:', error);
+    }
+  };
+
+  const fetchCandidatesCenterCount = async () => {
+    setLoading(true);
+    try {
+      // Send a GET request to fetch the getAllPatients dropdown data
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}admin/getCenterCountsByCenterAndDate`
+      }).then((res) => {
+        if (res) {
+          setCenterCountData(res?.totalData);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching getAllPatients:', error);
     }
   };
 
@@ -139,6 +183,25 @@ const useCandidates = () => {
       }).then((res) => {
         if (res) {
           setModifyCandidates(res?.message);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error updating email template:', error);
+      setLoading(false);
+    }
+  };
+
+  const generateCenterCode = async (data) => {
+    setLoading(true);
+    try {
+      fetchData({
+        method: 'POST',
+        url: `${conf.apiBaseUrl}admin/createCenterCode`,
+        data: data
+      }).then((res) => {
+        if (res) {
+          setGenCenterCode(res);
         }
       });
     } catch (error) {
@@ -200,9 +263,9 @@ const useCandidates = () => {
     candidateVisit,
     errors,
     fetchCandidatesCenterCount,
-    centerCountData,
-    deletePatient,
-    deletePatientData
+    centerCountData, fetchSubmittedFilterData, 
+    deletePatient, submittedCandidates, fetchSubmiitedCandidates, 
+    deletePatientData, genCenterCode, generateCenterCode
   };
 };
 export default useCandidates;

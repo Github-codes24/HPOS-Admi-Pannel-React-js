@@ -3,9 +3,12 @@ import useBreastCancer from '../../hooks/useBreastCancer';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import FileSaver from "file-saver";
+import * as XLSX from 'xlsx';
 
 const TableBreastCancer = () => {
-    const { fetchAllBreastCancerPatients, fetchFilterData, deletePatient, breastCancerData } = useBreastCancer();
+    const { fetchAllBreastCancerPatients, fetchFilterData, deletePatient, 
+        breastCancerData, fetchBreastCancerById, breastCancerDetails} = useBreastCancer();
     // console.log(breastCancerData);
     const dialogRef = useRef(null);
     const navigate = useNavigate();
@@ -41,7 +44,50 @@ const TableBreastCancer = () => {
 
     useEffect(() => {
         fetchAllBreastCancerPatients();
+        if (breastCancerDetails) {
+            fetchBreastCancerById(breastCancerDetails?._id)
+        }
     }, []);
+    
+    const downloadbreastCancerDetails = () => {
+        if (breastCancerDetails) {
+            const data = [
+                {
+                    "Personal Name": breastCancerDetails?.personalName,
+                    "Age": breastCancerDetails?.age,
+                    "Gender": breastCancerDetails?.gender,
+                    "Address": `${breastCancerDetails?.address.house}, ${breastCancerDetails?.address.city}, ${breastCancerDetails?.address.district}, ${breastCancerDetails?.address.state}, ${breastCancerDetails?.address.pincode}`,
+                    "Mobile Number": breastCancerDetails?.mobileNumber,
+                    "Blood Status": breastCancerDetails?.bloodStatus,
+                    "Card Status": breastCancerDetails?.cardStatus,
+                    "Result Status": breastCancerDetails?.resultStatus,
+                    "Center Code": breastCancerDetails?.centerCode,
+                    "Center Name": breastCancerDetails?.centerName,
+                    "Created At": new Date(breastCancerDetails?.createdAt).toLocaleString(),
+                    "Is Under Blood Transfusion": breastCancerDetails?.isUnderBloodTransfusion ? 'Yes' : 'No',
+                    "Is Under Medication": breastCancerDetails?.isUnderMedication ? 'Yes' : 'No',
+                    "Marital Status": breastCancerDetails?.maritalStatus,
+                    "Family History": breastCancerDetails?.familyHistory ? 'Yes' : 'No',
+                    "Fathers Name": breastCancerDetails?.fathersName,
+                    "Mothers Name": breastCancerDetails?.motherName,
+                    "ABHA Number": breastCancerDetails?.number,
+                    "Aadhaar Number": breastCancerDetails?.aadhaarNumber,
+                    "Cast": breastCancerDetails?.caste,
+                    "Category": breastCancerDetails?.category,
+                    "Sub Caste": breastCancerDetails?.subCaste,
+                }
+            ];
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Candidate Details");
+
+            const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+            const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+            FileSaver.saveAs(blob, `candidate_${breastCancerDetails?._id}_details.xlsx`);
+        } else {
+            console.error("Candidate details not available.");
+        }
+    };
 
     const onEdit = (item) => {
         console.log('item', item)
@@ -96,7 +142,7 @@ const TableBreastCancer = () => {
                                 </td>
                                 <td className={`border px-4 py-2 ${item.cardStatus === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>{item.cardStatus}</td>
                                 <td className="border px-4 py-2 flex justify-around gap-4">
-                                    <button className="text-black hover:text-gray-600">
+                                    <button className="text-black hover:text-gray-600"  onClick={downloadbreastCancerDetails}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
                                             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />
@@ -164,11 +210,8 @@ const TableBreastCancer = () => {
                                         onChange={formik.handleChange}
                                         className="select select-bordered w-full"
                                     >
-                                        <option value="Normal(HbAA)">Normal (HbAA)</option>
-                                        <option value="Sickle Cell Trait(HbAS)">Sickle Cell Trait (HbAS)</option>
-                                        <option value="Sickle Cell Disease(HbSS)">Sickle Cell Disease (HbSS)</option>
-                                        <option value="low Hb">Low Hb</option>
-                                        <option value="Repeat">Repeat</option>
+                                        <option value="Negative">Negative</option>
+                                        <option value="Positive">Positive</option>
                                     </select>
                                 </div>
                             </div>

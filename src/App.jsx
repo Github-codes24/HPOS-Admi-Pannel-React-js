@@ -13,6 +13,7 @@ import EditSickleCellPage from './components/sickleCell/EditSickleCellPage';
 import EditBreastCancer from './components/breastCancer/EditBreastCancer';
 import EditCervicalCancer from './components/cervicalCancer/EditCervicalCancer';
 import EditResultPage from './components/dashboard/EditResultPage';
+import ViewDashboardPage from './components/dashboard/ViewDashboardPage';
 
 function App() {
   const [activeTab, setActiveTab] = useState('Dashboard');
@@ -57,6 +58,19 @@ function App() {
                   <ErrorBoundary>
                     <Suspense fallback={<div>Loading...</div>}>
                       <EditResultPage />
+                    </Suspense>
+                  </ErrorBoundary>
+                </MainLayout>
+              }
+            />
+
+            <Route
+              path="/view-dashboard-page"
+              element={
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+                  <ErrorBoundary>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <ViewDashboardPage />
                     </Suspense>
                   </ErrorBoundary>
                 </MainLayout>

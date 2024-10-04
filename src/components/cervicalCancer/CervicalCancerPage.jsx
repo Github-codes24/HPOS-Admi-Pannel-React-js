@@ -6,9 +6,13 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import CenterCount from './CenterCount';
+import FileSaver from "file-saver";
+import * as XLSX from 'xlsx';
 
 const CervicalCancerPage = () => {
-    const { fetchAllCervicalCancer, fetchFilterData, deletePatient, cervicalCancerData } = useCervicalCancer();
+    const { fetchAllCervicalCancer, fetchFilterData, deletePatient, cervicalCancerData,
+        cervicalCancerDetails, fetchCervicalCancerById
+     } = useCervicalCancer();
     console.log(cervicalCancerData);
     const dialogRef = useRef(null);
     const navigate = useNavigate();
@@ -18,6 +22,9 @@ const CervicalCancerPage = () => {
 
     useEffect(() => {
         fetchAllCervicalCancer();
+        if (cervicalCancerDetails) {
+            fetchCervicalCancerById(cervicalCancerDetails?._id)
+        }
     }, []);
 
     const formik = useFormik({
@@ -44,6 +51,46 @@ const CervicalCancerPage = () => {
             document.getElementById('filterdata').close(); // Close modal after submit
         },
     });
+
+    const downloadcervicalCancerDetails = () => {
+        if (cervicalCancerDetails) {
+            const data = [
+                {
+                    "Personal Name": cervicalCancerDetails?.personalName,
+                    "Age": cervicalCancerDetails?.age,
+                    "Gender": cervicalCancerDetails?.gender,
+                    "Address": `${cervicalCancerDetails?.address.house}, ${cervicalCancerDetails?.address.city}, ${cervicalCancerDetails?.address.district}, ${cervicalCancerDetails?.address.state}, ${cervicalCancerDetails?.address.pincode}`,
+                    "Mobile Number": cervicalCancerDetails?.mobileNumber,
+                    "Blood Status": cervicalCancerDetails?.bloodStatus,
+                    "Card Status": cervicalCancerDetails?.cardStatus,
+                    "Result Status": cervicalCancerDetails?.resultStatus,
+                    "Center Code": cervicalCancerDetails?.centerCode,
+                    "Center Name": cervicalCancerDetails?.centerName,
+                    "Created At": new Date(cervicalCancerDetails?.createdAt).toLocaleString(),
+                    "Is Under Blood Transfusion": cervicalCancerDetails?.isUnderBloodTransfusion ? 'Yes' : 'No',
+                    "Is Under Medication": cervicalCancerDetails?.isUnderMedication ? 'Yes' : 'No',
+                    "Marital Status": cervicalCancerDetails?.maritalStatus,
+                    "Family History": cervicalCancerDetails?.familyHistory ? 'Yes' : 'No',
+                    "Fathers Name": cervicalCancerDetails?.fathersName,
+                    "ABHA Number": cervicalCancerDetails?.number,
+                    "Aadhaar Number": cervicalCancerDetails?.aadhaarNumber,
+                    "Mothers Name": cervicalCancerDetails?.motherName,
+                    "Cast": cervicalCancerDetails?.caste,
+                    "Category": cervicalCancerDetails?.category,
+                    "Sub Caste": cervicalCancerDetails?.subCaste,
+                }
+            ];
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Candidate Details");
+
+            const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+            const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+            FileSaver.saveAs(blob, `candidate_${cervicalCancerDetails?._id}_details.xlsx`);
+        } else {
+            console.error("Candidate details not available.");
+        }
+    };
 
     const onEdit = (item) => {
         console.log('item', item)
@@ -99,7 +146,7 @@ const CervicalCancerPage = () => {
                                 </td>
                                 <td className={`border px-4 py-2 ${item.cardStatus === 'Pending' ? 'text-red-500' : 'text-blue-500'}`}>{item.cardStatus}</td>
                                 <td className="border px-4 py-2 flex justify-around gap-4">
-                                    <button className="text-black hover:text-gray-600">
+                                    <button className="text-black hover:text-gray-600" onClick={downloadcervicalCancerDetails}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-download" viewBox="0 0 16 16">
                                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
                                             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />
@@ -167,11 +214,8 @@ const CervicalCancerPage = () => {
                                         onChange={formik.handleChange}
                                         className="select select-bordered w-full"
                                     >
-                                        <option value="Normal(HbAA)">Normal (HbAA)</option>
-                                        <option value="Sickle Cell Trait(HbAS)">Sickle Cell Trait (HbAS)</option>
-                                        <option value="Sickle Cell Disease(HbSS)">Sickle Cell Disease (HbSS)</option>
-                                        <option value="low Hb">Low Hb</option>
-                                        <option value="Repeat">Repeat</option>
+                                        <option value="Negative">Negative</option>
+                                        <option value="Positive">Positive</option>
                                     </select>
                                 </div>
                             </div>
