@@ -63,7 +63,19 @@ function App() {
                 </MainLayout>
               }
             />
-
+            {/* EditSickleCellPage */}
+            <Route
+              path="/edit-result-SickleCell"
+              element={
+                <MainLayout activeTab={activeTab} setActiveTab={setActiveTab}>
+                  <ErrorBoundary>
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <EditSickleCellPage />
+                    </Suspense>
+                  </ErrorBoundary>
+                </MainLayout>
+              }
+            />
             <Route
               path="/view-dashboard-page"
               element={

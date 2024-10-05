@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import conf from '../config/index';
-import useFetch from './useFetch';
 import { getAllCitiesAtom } from '../state/citiesState';
+import useFetch from './useFetch';
 
 const useCities = () => {
   const [fetchData] = useFetch();
@@ -19,9 +19,9 @@ const useCities = () => {
         url: `${conf.apiBaseUrl}admin/getCities`
       }).then((res) => {
         if (res) {
-            setGetCities(res?.data);
-        }else{
-            setErrors(errors)
+          setGetCities(res?.data);
+        } else {
+          setErrors(errors);
         }
       });
     } catch (error) {
@@ -30,7 +30,7 @@ const useCities = () => {
     }
   };
 
-  return {getCities, fetchCities, loading, errors};
+  return { getCities, fetchCities, loading, errors };
 };
 
 export default useCities;

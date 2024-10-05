@@ -60,7 +60,7 @@ const useCandidates = () => {
       console.error('Error fetching getAllPatients:', error);
     }
   };
-  
+
   const fetchFilterData = async (filters) => {
     try {
       // Ensure filters are defined
@@ -93,13 +93,14 @@ const useCandidates = () => {
   const fetchSubmiitedCandidates = async () => {
     setLoading(true);
     try {
-      await fetchData({ method: 'GET', url: `${conf.apiBaseUrl}admin/getAllPatientsForSubmitted` }).then(
-        (res) => {
-          if (res) {
-            setSubmittedCandidates(res?.totalData);
-          }
+      await fetchData({
+        method: 'GET',
+        url: `${conf.apiBaseUrl}admin/getAllPatientsForSubmitted`
+      }).then((res) => {
+        if (res) {
+          setSubmittedCandidates(res?.totalData);
         }
-      );
+      });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching getAllPatients:', error);
@@ -263,9 +264,14 @@ const useCandidates = () => {
     candidateVisit,
     errors,
     fetchCandidatesCenterCount,
-    centerCountData, fetchSubmittedFilterData, 
-    deletePatient, submittedCandidates, fetchSubmiitedCandidates, 
-    deletePatientData, genCenterCode, generateCenterCode
+    centerCountData,
+    fetchSubmittedFilterData,
+    deletePatient,
+    submittedCandidates,
+    fetchSubmiitedCandidates,
+    deletePatientData,
+    genCenterCode,
+    generateCenterCode
   };
 };
 export default useCandidates;
