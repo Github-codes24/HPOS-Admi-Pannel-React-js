@@ -23,11 +23,18 @@ const Sidebar = ({toggleSidebar, isSidebarVisible, setActiveTab }) => {
   //   }
   // };
 
+  
   const logoutBtn = () => {
-    localStorage.removeItem('token');
-    setLoggedOut(true);
-    window.location.reload();
+    // Clear the session storage
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('tokenExpiration'); // Clear expiration time
+    // You can also set a state if needed to manage logged-out state
+    // setLoggedOut(true); 
+
+    // Navigate to the login page
+    navigate('/');
   };
+  
 
   // useEffect(() => {
   //   if (loggedOut) {
@@ -130,8 +137,8 @@ const Sidebar = ({toggleSidebar, isSidebarVisible, setActiveTab }) => {
             </svg>
             <p className="text-slate-500 text-md font-bold">Add Admin</p>
           </div>
-          <div className="pb-4 flex items-center gap-3">
-            <svg
+          {/* <div className="pb-4 flex items-center gap-3"> */}
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
@@ -139,9 +146,9 @@ const Sidebar = ({toggleSidebar, isSidebarVisible, setActiveTab }) => {
               className="bi bi-plus-circle-fill"
               viewBox="0 0 16 16">
               <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
-            </svg>
-            <p className="text-slate-500 text-md font-bold">Add Employee</p>
-          </div>
+            </svg> */}
+            {/* <p className="text-slate-500 text-md font-bold">Add Employee</p> */}
+          {/* </div> */}
           <div className="flex items-center gap-3">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -159,7 +166,7 @@ const Sidebar = ({toggleSidebar, isSidebarVisible, setActiveTab }) => {
                 d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"
               />
             </svg>
-            <p onClick={() => logoutBtn()}>Log out</p>
+            <button onClick={() => logoutBtn()}>Log out</button>
           </div>
         </div>
       </div>

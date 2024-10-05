@@ -1,19 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import useCandidates from '../../hooks/candidateData';
 import useCities from '../../hooks/useCities';
 import Select from 'react-select';
+import FileSaver from "file-saver";
+import * as XLSX from 'xlsx';
+
 
 const ViewDashboardPage = () => {
   const { fetchSubmiitedCandidates, submittedCandidates, fetchSubmittedFilterData } = useCandidates();
   const { fetchCities, getCities } = useCities();
-  console.log("submittedCandidates", submittedCandidates, "getCities", getCities)
   const dialogRef = useRef(null);
   const closeDialog = () => {
     dialogRef.current.close();
   };
-  const cityOptions = getCities?.map(city => ({ value: city, label: city }));
+
   useEffect(() => {
     fetchSubmiitedCandidates();
     fetchCities();
@@ -21,29 +23,77 @@ const ViewDashboardPage = () => {
 
   const formik = useFormik({
     initialValues: {
-      location: '',
+      location: null,
       centerName: '',
       fromDate: '',
       toDate: '',
       age: '',
     },
     validationSchema: Yup.object({
-      location: Yup.string(),
+      location: Yup.object().nullable(),
       centerName: Yup.string(),
       fromDate: Yup.date(),
       toDate: Yup.date(),
       age: Yup.string(),
     }),
     onSubmit: (values) => {
-      console.log('values', values)
       const data = {
-        ...values, 
-        // location:address.city,
-      }
+        ...(values.location && { 'address.city': values.location.value }),
+        ...(values.centerName && { centerName: values.centerName }),
+        ...(values.fromDate && { fromDate: values.fromDate }),
+        ...(values.toDate && { toDate: values.toDate }),
+        ...(values.age && { age: values.age }),
+      };
       fetchSubmittedFilterData(data);
-      document.getElementById('filterdata').close();
+      closeDialog();
     },
   });
+
+  const downloadSubmittedCandidate = () => {
+    if (submittedCandidates && submittedCandidates.length > 0) {
+      const data = submittedCandidates.map(candidate => ({
+        "Personal Name": candidate.personalName,
+        "Age": candidate.age,
+        "Gender": candidate.gender,
+        "Address": candidate.address
+          ? `${candidate.address.house || ''}, ${candidate.address.city || ''}, ${candidate.address.district || ''}, ${candidate.address.state || ''}, ${candidate.address.pincode || ''}`
+          : 'N/A',
+        "Mobile Number": candidate.mobileNumber,
+        "Blood Status": candidate.bloodStatus,
+        "Card Status": candidate.cardStatus,
+        "Result Status": candidate.resultStatus,
+        "Center Code": candidate.centerCode,
+        "Center Name": candidate.centerName,
+        "Created At": new Date(candidate.createdAt).toLocaleString(),
+        "Is Under Blood Transfusion": candidate.isUnderBloodTransfusion ? 'Yes' : 'No',
+        "Is Under Medication": candidate.isUnderMedication ? 'Yes' : 'No',
+        "Marital Status": candidate.maritalStatus,
+        "Family History": candidate.familyHistory ? 'Yes' : 'No',
+        "Fathers Name": candidate.fathersName,
+        "Mothers Name": candidate.motherName,
+        "Sub Caste": candidate.subCaste,
+        "ABHA Number": candidate.number,
+        "Aadhaar Number": candidate.aadhaarNumber,
+        "Cast": candidate.caste,
+        "Category": candidate.category,
+      }));
+  
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Candidate Details");
+  
+      const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+      FileSaver.saveAs(blob, `submitted_candidates.xlsx`);
+    } else {
+      console.error("Candidate details not available.");
+    }
+  };
+  
+
+  const cityOptions = getCities?.flat().map(city => ({
+    value: city, label: city
+  }));
 
   return (
     <>
@@ -58,8 +108,10 @@ const ViewDashboardPage = () => {
               </svg>
             </div>
             <div className="text-blue-500 bg-blue-100 flex items-center px-2 h-5 border-2 border-blue-300 py-2 rounded "
-              onClick={() => console.log('click')}>
-              Export into Excel
+            >
+              <button className="text-black hover:text-gray-600" onClick={downloadSubmittedCandidate}>
+                Export into Excel
+              </button>
             </div>
           </div>
         </div>
@@ -116,40 +168,6 @@ const ViewDashboardPage = () => {
             <div className="flex gap-6 items-center">
               <div className="collapse collapse-arrow ">
                 <input type="checkbox" />
-                <div className="collapse-title text-sm  font-medium">Search Location</div>
-                <div className="collapse-content">
-                  <Select
-                    name="location"
-                    options={cityOptions}
-                    value={formik.values.location}
-                    onChange={(option) => formik.setFieldValue('location', option)}
-                    placeholder="Select a city..."
-                    isClearable
-                    isSearchable
-                    className="w-full"
-                  />
-                </div>
-              </div>
-              <div className="collapse collapse-arrow ">
-                <input type="checkbox" />
-                <div className="collapse-title text-sm font-medium">Center Name</div>
-                <div className="collapse-content">
-                  <label
-                    className="input input-sm w-40 input-bordered flex items-center gap-2">
-                    <input
-                      type="text"
-                      name="centerName"
-                      value={formik.values.centerName}
-                      onChange={formik.handleChange}
-                      className="input input-bordered w-full"
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-6 items-center">
-              <div className="collapse collapse-arrow ">
-                <input type="checkbox" />
                 <div className="collapse-title text-sm  font-medium">Select Date</div>
                 <div className="collapse-content">
                   <div>
@@ -176,7 +194,59 @@ const ViewDashboardPage = () => {
                   </div>
                 </div>
               </div>
+              <div className="collapse collapse-arrow ">
+                <input type="checkbox" />
+                <div className="collapse-title text-sm font-medium">Age</div>
+                <div className="collapse-content">
+                  <label
+                    className="input input-sm w-40 input-bordered flex items-center gap-2">
+                    <input
+                      type="text"
+                      name="age"
+                      value={formik.values.age}
+                      onChange={formik.handleChange}
+                      className="input input-bordered w-full"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-6 items-center">
+              <div className="collapse collapse-arrow ">
+                <input type="checkbox" />
+                <div className="collapse-title text-sm font-medium">Center Name</div>
+                <div className="collapse-content">
+                  <label
+                    className="input input-sm w-40 input-bordered flex items-center gap-2">
+                    <input
+                      type="text"
+                      name="centerName"
+                      value={formik.values.centerName}
+                      onChange={formik.handleChange}
+                      className="input input-bordered w-full"
+                    />
+                  </label>
+                </div>
+              </div>
 
+              <div className="collapse collapse-arrow ">
+                <input type="checkbox" />
+                <div className="collapse-title text-sm  font-medium">Search Location</div>
+                <div className="collapse-content" style={{ paddingBottom: '290px' }}>
+                  <Select
+                    name="location"
+                    options={cityOptions}
+                    value={formik.values.location}
+                    onChange={(option) => {
+                      formik.setFieldValue('location', option);
+                    }}
+                    placeholder="Select a city..."
+                    isClearable
+                    isSearchable
+                    className="w-full"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

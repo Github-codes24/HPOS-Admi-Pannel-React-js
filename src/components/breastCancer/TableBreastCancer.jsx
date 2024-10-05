@@ -88,6 +88,53 @@ const TableBreastCancer = () => {
             console.error("Candidate details not available.");
         }
     };
+// Export Info pdf
+
+const ExportInfoExcel = () => {
+    if (breastCancerData && breastCancerData.length > 0) {
+        // Create data array by mapping through the breast cancer data
+        const data = breastCancerData?.map(candidate => ({
+            "Personal Name": candidate?.personalName,
+            "Age": candidate?.age,
+            "Gender": candidate?.gender,
+            "Address": `${candidate?.address.house}, ${candidate?.address.city}, ${candidate?.address.district}, ${candidate?.address.state}, ${candidate?.address.pincode}`,
+            "Mobile Number": candidate?.mobileNumber,
+            "Blood Status": candidate?.bloodStatus,
+            "Card Status": candidate?.cardStatus,
+            "Result Status": candidate?.resultStatus,
+            "Center Code": candidate?.centerCode,
+            "Center Name": candidate?.centerName,
+            "Created At": new Date(candidate?.createdAt).toLocaleString(),
+            "Is Under Blood Transfusion": candidate?.isUnderBloodTransfusion ? 'Yes' : 'No',
+            "Is Under Medication": candidate?.isUnderMedication ? 'Yes' : 'No',
+            "Marital Status": candidate?.maritalStatus,
+            "Family History": candidate?.familyHistory ? 'Yes' : 'No',
+            "Father's Name": candidate?.fathersName,
+            "Mother's Name": candidate?.motherName,
+            "Sub Caste": candidate?.subCaste,
+            "ABHA Number": candidate?.number,
+            "Aadhaar Number": candidate?.aadhaarNumber,
+            "Caste": candidate?.caste,
+            "CreatedAt" :candidate?.createdAt,
+            "BirthDay":candidate?.birthDay,
+            "BirthMonth":candidate?.birthMonth,
+            "BirthYear": candidate?.birthYear,
+            "Category": candidate?.category,
+        }));
+
+        // Create a worksheet and a workbook
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Breast Cancer Data");
+
+        // Write the Excel file and trigger the download
+        const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+        FileSaver.saveAs(blob, `breast_cancer_data.xlsx`);
+    } else {
+        console.error("No breast cancer data available to export.");
+    }
+};
 
     const onEdit = (item) => {
         console.log('item', item)
@@ -109,7 +156,17 @@ const TableBreastCancer = () => {
                                 <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
                             </svg>
                         </div>
-                        <div className="text-blue-500 bg-blue-100 flex items-center px-2 h-5 border-2 border-blue-300 py-2 rounded ">Edit Result</div>
+                        <div className="text-blue-500 bg-blue-100 flex items-center px-2 h-5 border-2 border-blue-300 py-2 rounded ">Edit Result
+                        <svg className="ml-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
+                            </svg>
+                        </div>
+                         {/* Export pdf Excel */}
+                         
+                         <div className="text-blue-500 bg-blue-100 flex items-center px-2 h-5 border-2 border-blue-300 py-2 rounded cursor-pointer "
+                          onClick={() => ExportInfoExcel()}>
+                            Export Info Excel
+                        </div>
                     </div>
                 </div>
                 <table className="table w-full ">
