@@ -17,9 +17,12 @@ const useCervicalCancer = () => {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState('');
   const [cervicalCancerData, setCervicalCancerData] = useRecoilState(allCervicalCancerDataAtom);
-  const [submittedCervicalCancer, setSubmittedCervicalCancer] = useRecoilState(submittedCervicalCancerAtom);
+  const [submittedCervicalCancer, setSubmittedCervicalCancer] = useRecoilState(
+    submittedCervicalCancerAtom
+  );
   const [cervicalCancerCount, setCervicalCancerCount] = useRecoilState(allCervicalCancerCountAtom);
   const [modifyCervicalCancer, setModifyCervicalCancer] = useRecoilState(toastState);
+  const [modifyCervicalCancerResult, setModifyCervicalCanceresult] = useRecoilState(toastState);
   const [cervicalCancerDetails, setCervicalCancerDatails] = useRecoilState(
     cervicalCancerDetailIDAtom
   );
@@ -87,10 +90,10 @@ const useCervicalCancer = () => {
   const fetchFilterData = async (filters) => {
     try {
       // Ensure filters are defined
-      if (!filters) {
+      if (!filters || Object.keys(filters).length === 0) {
         throw new Error('No filters provided');
       }
-      // Construct query parameters from filters
+
       const params = new URLSearchParams(filters).toString();
       const url = `${conf.apiBaseUrl}cervical/getAllPatients?${params}`;
 
@@ -192,6 +195,25 @@ const useCervicalCancer = () => {
     }
   };
 
+  const updateCervicalCancerResult = async (updateData) => {
+    setLoading(true);
+    try {
+      fetchData({
+        method: 'PUT',
+        url: `${conf.apiBaseUrl}cervical/updateManyUsersForCervicalCancer`,
+        data: updateData
+      }).then((res) => {
+        if (res) {
+          setModifyCervicalCanceresult(res?.message);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error updating email template:', error);
+      setLoading(false);
+    }
+  };
+
   const fetchGraphData = async (timeFrame) => {
     try {
       setLoading(true);
@@ -230,8 +252,13 @@ const useCervicalCancer = () => {
   };
 
   return {
-    fetchAllCervicalCancer, fetchSubmiitedCervicalCancer, fetchSubmittedFilterData,
-    cervicalCancerData, submittedCervicalCancer,
+    fetchAllCervicalCancer,
+    modifyCervicalCancerResult,
+    updateCervicalCancerResult,
+    fetchSubmiitedCervicalCancer,
+    fetchSubmittedFilterData,
+    cervicalCancerData,
+    submittedCervicalCancer,
     fetchFilterData,
     loading,
     cervicalCancerCount,

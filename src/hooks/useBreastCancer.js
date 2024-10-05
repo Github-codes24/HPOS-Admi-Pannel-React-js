@@ -18,8 +18,10 @@ const useBreastCancer = () => {
   const [errors, setErrors] = useState('');
   const [breastCancerCount, setBreastCancerCount] = useRecoilState(allBreastCancerCountAtom); // Correct atom for count
   const [breastCancerData, setBreastCancerData] = useRecoilState(allBreastCancerAtom); // Correct atom for data
-  const [submittedBreastCancer, setSubmittedBreastCancer] = useRecoilState(submittedBreastCancerAtom); // Correct atom for data
+  const [submittedBreastCancer, setSubmittedBreastCancer] =
+    useRecoilState(submittedBreastCancerAtom); // Correct atom for data
   const [modifyBreastCancer, setModifyBreastCancer] = useRecoilState(toastState);
+  const [modifyBreastCancerResult, setModifyBreastCancerResult] = useRecoilState(toastState);
   const [breastCancerDetails, setBreastCancerDatails] = useRecoilState(breastCancerDetailIDAtom);
   const [breastCancerVisit, setBreastCancerVisit] = useRecoilState(breastCancerVisitAtom);
   const [deletePatientData, setDeletePatientData] = useRecoilState(toastState);
@@ -189,6 +191,25 @@ const useBreastCancer = () => {
     }
   };
 
+  const updateBreastCancerResult = async (updateData) => {
+    setLoading(true);
+    try {
+      fetchData({
+        method: 'PUT',
+        url: `${conf.apiBaseUrl}breastCancer/updateManyUsersForBreastCancer`,
+        data: updateData
+      }).then((res) => {
+        if (res) {
+          setModifyBreastCancerResult(res?.message);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error updating email template:', error);
+      setLoading(false);
+    }
+  };
+
   const fetchGraphData = async (timeFrame) => {
     try {
       setLoading(true);
@@ -228,8 +249,13 @@ const useBreastCancer = () => {
 
   // Return values and functions
   return {
-    fetchAllBreastCancerPatients,submittedBreastCancer, fetchSubmiitedBreastCancer,
-    fetchFilterData, fetchSubmittedFilterData,
+    fetchAllBreastCancerPatients,
+    modifyBreastCancerResult,
+    updateBreastCancerResult,
+    submittedBreastCancer,
+    fetchSubmiitedBreastCancer,
+    fetchFilterData,
+    fetchSubmittedFilterData,
     breastCancerData, // Breast Cancer patient data
     loading, // Loading state
     breastCancerCount,

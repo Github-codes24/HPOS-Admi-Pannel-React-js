@@ -6,7 +6,7 @@ export const allBreastCancerAtom = atom({
   key: 'allBreastCancerDetails',
   default: [],
   effects_UNSTABLE: [persistAtom]
-})
+});
 export const submittedBreastCancerAtom = atom({
   key: 'submittedBreastCancer',
   default: [],

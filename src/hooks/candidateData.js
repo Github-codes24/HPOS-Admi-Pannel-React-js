@@ -20,6 +20,7 @@ const useCandidates = () => {
   const [candidates, setCandidates] = useRecoilState(allCandidateDataAtom);
   const [submittedCandidates, setSubmittedCandidates] = useRecoilState(submittedCandidateAtom);
   const [modifyCandidates, setModifyCandidates] = useRecoilState(toastState);
+  const [modifyCandidatesResult, setModifyCandidatesReult] = useRecoilState(toastState);
   const [genCenterCode, setGenCenterCode] = useRecoilState(toastState);
   const [deletePatientData, setDeletePatientData] = useRecoilState(toastState);
   const [candidateCount, setCandidateCount] = useRecoilState(allCandidatesCountAtom);
@@ -193,6 +194,25 @@ const useCandidates = () => {
     }
   };
 
+  const updateCandidatesResult = async (updateData) => {
+    setLoading(true);
+    try {
+      fetchData({
+        method: 'PUT',
+        url: `${conf.apiBaseUrl}admin/updateManyUsers`,
+        data: updateData
+      }).then((res) => {
+        if (res) {
+          setModifyCandidatesReult(res?.message);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error updating email template:', error);
+      setLoading(false);
+    }
+  };
+
   const generateCenterCode = async (data) => {
     setLoading(true);
     try {
@@ -251,6 +271,8 @@ const useCandidates = () => {
 
   return {
     fetchAllCandidates,
+    modifyCandidatesResult,
+    updateCandidatesResult,
     fetchFilterData,
     candidates,
     loading,

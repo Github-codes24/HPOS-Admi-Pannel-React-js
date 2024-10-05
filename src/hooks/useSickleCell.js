@@ -21,6 +21,7 @@ const useSickleCell = () => {
   const [submittedSickleCell, setSubmittedSickleCell] = useRecoilState(submittedSickleCellAtom);
   const [sickleCellCount, setSickleCellCount] = useRecoilState(allSickleCellCountAtom);
   const [modifySickleCell, setModifySickleCell] = useRecoilState(toastState);
+  const [modifySickleCellResult, setModifySickleCellResult] = useRecoilState(toastState);
   const [sickleCellDetails, setSickleCellDatails] = useRecoilState(sickleCellDetailIDAtom);
   const [sickleCellReport, setSickleCellReport] = useRecoilState(sickleCellReportAtom);
   const [sickleCellVisit, setSickleCelVisit] = useRecoilState(sickleCelVisitAtom);
@@ -151,7 +152,6 @@ const useSickleCell = () => {
     }
   };
 
-
   const fetchSickleCellById = async (id) => {
     setLoading(true);
     try {
@@ -180,6 +180,25 @@ const useSickleCell = () => {
       }).then((res) => {
         if (res) {
           setModifySickleCell(res?.message);
+        }
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error updating email template:', error);
+      setLoading(false);
+    }
+  };
+
+  const updateSickleCellResult = async (updateData) => {
+    setLoading(true);
+    try {
+      fetchData({
+        method: 'PUT',
+        url: `${conf.apiBaseUrl}sickleCell/updateManyUsersForSickleCellCancer`,
+        data: updateData
+      }).then((res) => {
+        if (res) {
+          setModifySickleCellResult(res?.message);
         }
       });
     } catch (error) {
@@ -245,8 +264,13 @@ const useSickleCell = () => {
   };
 
   return {
-    fetchAllSickleCell, fetchSubmittedFilterData, fetchSubmiitedSickleCell,
-    fetchFilterData, submittedSickleCell,
+    fetchAllSickleCell,
+    modifySickleCellResult,
+    updateSickleCellResult,
+    fetchSubmittedFilterData,
+    fetchSubmiitedSickleCell,
+    fetchFilterData,
+    submittedSickleCell,
     sickleCellData,
     loading,
     sickleCellCount,

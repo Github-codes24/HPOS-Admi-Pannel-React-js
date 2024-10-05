@@ -101,7 +101,9 @@ const SickleCellPage = () => {
     }
 
     const onDelete = (item) => deletePatient(item?._id)
-
+    const onEditResult = () => {
+        navigate(`/edit-result-sickle-cell`);
+    }
     return (
         <>
             <CountingData />
@@ -119,7 +121,9 @@ const SickleCellPage = () => {
                                 <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
                             </svg>
                         </div>
-                        <div className="text-blue-500 bg-blue-100 flex items-center px-2 h-5 border-2 border-blue-300 py-2 rounded ">Edit Result</div>
+                        <div className="text-blue-500 bg-blue-100 flex items-center px-2 h-5 border-2 border-blue-300 py-2 rounded "
+                         onClick={() => onEditResult()}
+                        >Edit Result</div>
                     </div>
                 </div>
                 <table className="table w-full ">
